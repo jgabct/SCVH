@@ -1,10 +1,11 @@
 package users;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.Id;
+
 
 @Entity
 public class Visitor {
@@ -65,6 +66,11 @@ public class Visitor {
 		this.employRgstry = employRgstry;
 	}
 
+	// O query necessita do construtor padrão (Vazio)
+	public Visitor() {
+		
+	}
+	
 	public Visitor(String cpf, String name, String password, String rg, String phone, String employRgstry) {
 		this.cpf = cpf;
 		this.name = name;
@@ -78,9 +84,9 @@ public class Visitor {
 
 	}
 
-	public List<Visitor> list() {
+	public static List<Visitor> list(EntityManager em) {
 
-		return new ArrayList<Visitor>();
+		return em.createQuery("SELECT e FROM Visitor e", Visitor.class).getResultList();
 
 	}
 

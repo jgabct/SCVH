@@ -1,9 +1,9 @@
 package users;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -69,6 +69,10 @@ public class Employee {
 
 	}
 
+	public Employee() {
+		
+	}
+	
 	public Employee(String registration, String cpf, String rg, String phone, Sector sector) {
 		this.registration = registration;
 		this.cpf = cpf;
@@ -81,9 +85,9 @@ public class Employee {
 
 	}
 
-	public List<Employee> list() {
+	public static List<Employee> list(EntityManager em) {
 
-		return new ArrayList<Employee>();
+		return em.createQuery("SELECT e FROM Employee e", Employee.class).getResultList();
 
 	}
 

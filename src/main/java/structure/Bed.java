@@ -1,9 +1,9 @@
 package structure;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.Id;
 
 @Entity
@@ -29,6 +29,10 @@ public class Bed {
 		this.propertyNumber = propertyNumber;
 	}
 
+	public Bed() {
+
+	}
+
 	public Bed(byte bedNumber, String propertyNumber) {
 
 		this.bedNumber = bedNumber;
@@ -40,9 +44,9 @@ public class Bed {
 
 	}
 
-	public List<Bed> list() {
+	public static List<Bed> list(EntityManager em) {
 
-		return new ArrayList<Bed>();
+		return em.createQuery("SELECT e FROM Bed e", Bed.class).getResultList();
 	}
 
 }

@@ -1,9 +1,9 @@
 package structure;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -64,6 +64,10 @@ public class Sector {
 		this.rooms = rooms;
 	}
 
+	public Sector() {
+
+	}
+
 	public Sector(String sectorCode, String acronym, String sectorName, Rule rule, List<Room> rooms) {
 		this.sectorCode = sectorCode;
 		this.acronym = acronym;
@@ -75,9 +79,9 @@ public class Sector {
 
 	}
 
-	public List<Sector> list() {
+	public static List<Sector> list(EntityManager em) {
 
-		return new ArrayList<Sector>();
+		return em.createQuery("SELECT e FROM Bed e", Sector.class).getResultList();
 
 	}
 
