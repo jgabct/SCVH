@@ -1,10 +1,10 @@
 package structure;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.Id;
 
 @Entity
@@ -103,6 +103,12 @@ public class Rule {
 		this.visitDuration = visitDuration;
 	}
 
+	
+	public Rule() {
+		
+	}
+	
+	
 	// Construtor com atributos minimos para um regra com limite de duração
 	public Rule(String ruleCode, int maxPerpacient, int maxPerRoom, int visitDuration) {
 		this.ruleCode = ruleCode;
@@ -142,9 +148,9 @@ public class Rule {
 
 	}
 
-	public List<Rule> list() {
+	public static List<Rule> list(EntityManager em) {
 
-		return new ArrayList<Rule>();
+		return em.createQuery("SELECT e FROM Rule e", Rule.class).getResultList();
 
 	}
 

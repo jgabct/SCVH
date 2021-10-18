@@ -1,9 +1,9 @@
 package visits;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.Id;
 
 import structure.Bed;
@@ -40,6 +40,10 @@ public class Pacient {
 		this.employRgstry = employRgstry;
 	}
 
+	public Pacient() {
+		
+	}
+	
 	public Pacient(String linkCode, String name, String employRgstry) {
 		this.linkCode = linkCode;
 		this.name = name;
@@ -53,9 +57,9 @@ public class Pacient {
 
 	}
 
-	public List<Pacient> list() {
+	public static List<Pacient> list(EntityManager em) {
 
-		return new ArrayList<Pacient>();
+		return em.createQuery("SELECT e FROM Pacient e", Pacient.class).getResultList();
 
 	}
 
