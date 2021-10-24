@@ -6,36 +6,39 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import users.Visitor;
+import model.entity.Visitor;
+import model.service.GenericOperations;
 
 public class Main {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		/*
-		 * A base de dados dever ser nomeada "gateway" 
-		 * Todas as informações relativas a senhas e nomes de usuario estão nas persistence-units do arquivo persistence.xml
-		 * O usuario "admin" tem todos os privilegios
-		 * Os usuarios "nursery" e "recept" somente podem manipular dados
-		 * 
-		 */
 
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("administrator");
 
 		EntityManager em = emf.createEntityManager();
 
-		// em.getTransaction().begin();
 		
-			// em.persist(new Visitor("111.222.333-45", "Jubscleiton", "514212", "12.123.123.12-0", "079-111", "Irineu"));
+		GenericOperations<Visitor> go = new GenericOperations<>(Visitor.class, em);
+		
+
+		
+		for (Visitor visitor : go.list()) {
 			
-		// em.getTransaction().commit();
-		
-		List<Visitor> visitors = Visitor.list(em);
-		
-		for (Visitor visitor : visitors) {
+			System.out.println(visitor);
 			
-			System.out.println(visitor.getCpf());
+		}
+		
+	
+		
+ 	go.update(go.select("111.111.333-45"),new Visitor("111.333.333-45","Mario", "174614798124", "124.173.123.10-9","079-999","Pirobau"));
+		
+	System.out.println("-----------");	
+	
+	for (Visitor visitor : go.list()) {
+			
+			System.out.println(visitor);
 			
 		}
 		
