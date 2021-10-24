@@ -1,16 +1,19 @@
-package structure;
+package model.entity;
 
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import model.interfaces.Ientity;
+
+
+
 @Entity
-public class Room {
+public class Room implements Ientity {
 
 	@Id
 	private String roomCode;
@@ -61,9 +64,10 @@ public class Room {
 
 	}
 
-	public static List<Room> list(EntityManager em) {
-
-		return em.createQuery("SELECT e FROM Room e", Room.class).getResultList();
+	@Override
+	public Object getKey() {
+		// TODO Auto-generated method stub
+		return this.roomCode;
 	}
 
 }

@@ -1,14 +1,15 @@
-package structure;
+package model.entity;
 
 import java.time.LocalTime;
-import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.Id;
 
+import model.interfaces.Ientity;
+
+
 @Entity
-public class Rule {
+public class Rule implements Ientity {
 
 	@Id
 	private String ruleCode;
@@ -148,10 +149,14 @@ public class Rule {
 
 	}
 
-	public static List<Rule> list(EntityManager em) {
-
-		return em.createQuery("SELECT e FROM Rule e", Rule.class).getResultList();
-
+	@Override
+	public Object getKey() {
+		// TODO Auto-generated method stub
+		return this.ruleCode;
 	}
+
+	
+
+
 
 }

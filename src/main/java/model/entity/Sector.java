@@ -1,16 +1,18 @@
-package structure;
+package model.entity;
 
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import model.interfaces.Ientity;
+
+
 @Entity
-public class Sector {
+public class Sector implements Ientity {
 
 	@Id
 	private String sectorCode;
@@ -79,10 +81,13 @@ public class Sector {
 
 	}
 
-	public static List<Sector> list(EntityManager em) {
-
-		return em.createQuery("SELECT e FROM Bed e", Sector.class).getResultList();
-
+	@Override
+	public Object getKey() {
+		// TODO Auto-generated method stub
+		return this.sectorCode;
 	}
 
+
+
+	
 }

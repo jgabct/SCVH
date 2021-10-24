@@ -1,17 +1,17 @@
-package users;
+package model.entity;
 
-import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import structure.Sector;
+import model.interfaces.Ientity;
+
+
 
 @Entity
-public class Employee {
+public class Employee implements Ientity {
 
 	@Id
 	private String registration;
@@ -85,10 +85,14 @@ public class Employee {
 
 	}
 
-	public static List<Employee> list(EntityManager em) {
-
-		return em.createQuery("SELECT e FROM Employee e", Employee.class).getResultList();
-
+	@Override
+	public Object getKey() {
+		// TODO Auto-generated method stub
+		return this.registration;
 	}
+
+
+
+
 
 }

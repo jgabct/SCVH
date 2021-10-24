@@ -1,16 +1,16 @@
-package visits;
+package model.entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.Id;
 
-import users.Visitor;
+import model.interfaces.Ientity;
+
+
 
 @Entity
-public class Visit {
+public class Visit implements Ientity {
 
 	@Id
 	private String visitId;
@@ -86,11 +86,7 @@ public class Visit {
 
 	}
 
-	public static List<Visit> list(EntityManager em) {
 
-		return em.createQuery("SELECT e FROM Visit e", Visit.class).getResultList();
-
-	}
 
 	public void markEntryDate() {
 
@@ -99,5 +95,13 @@ public class Visit {
 	public void markExitDate() {
 
 	}
+
+	@Override
+	public Object getKey() {
+		// TODO Auto-generated method stub
+		return this.visitId;
+	}
+
+	
 
 }

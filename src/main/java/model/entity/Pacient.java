@@ -1,15 +1,16 @@
-package visits;
+package model.entity;
 
-import java.util.List;
+
 
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.Id;
 
-import structure.Bed;
+import model.interfaces.Ientity;
+
+
 
 @Entity
-public class Pacient {
+public class Pacient implements Ientity {
 
 	@Id
 	private String linkCode;
@@ -57,10 +58,14 @@ public class Pacient {
 
 	}
 
-	public static List<Pacient> list(EntityManager em) {
-
-		return em.createQuery("SELECT e FROM Pacient e", Pacient.class).getResultList();
-
+	@Override
+	public Object getKey() {
+		// TODO Auto-generated method stub
+		return  this.linkCode;
 	}
+
+
+
+
 
 }

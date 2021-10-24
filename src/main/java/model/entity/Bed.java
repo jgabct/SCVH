@@ -1,4 +1,4 @@
-package structure;
+package model.entity;
 
 import java.util.List;
 
@@ -6,20 +6,14 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 
+import model.interfaces.Ientity;
+
 @Entity
-public class Bed {
+public class Bed implements Ientity {
 
 	@Id
-	private byte bedNumber;
 	private String propertyNumber;
-
-	public byte getBedNumber() {
-		return bedNumber;
-	}
-
-	public void setBedNumber(byte bedNumber) {
-		this.bedNumber = bedNumber;
-	}
+	private byte bedNumber;
 
 	public String getPropertyNumber() {
 		return propertyNumber;
@@ -28,6 +22,15 @@ public class Bed {
 	public void setPropertyNumber(String propertyNumber) {
 		this.propertyNumber = propertyNumber;
 	}
+	
+	public byte getBedNumber() {
+		return bedNumber;
+	}
+
+	public void setBedNumber(byte bedNumber) {
+		this.bedNumber = bedNumber;
+	}
+
 
 	public Bed() {
 
@@ -47,6 +50,12 @@ public class Bed {
 	public static List<Bed> list(EntityManager em) {
 
 		return em.createQuery("SELECT e FROM Bed e", Bed.class).getResultList();
+	}
+
+	@Override
+	public Object getKey() {
+		// TODO Auto-generated method stub
+		return this.propertyNumber;
 	}
 
 }

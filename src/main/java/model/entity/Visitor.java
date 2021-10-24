@@ -1,14 +1,17 @@
-package users;
+package model.entity;
 
-import java.util.List;
+
 
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.Id;
+
+import model.interfaces.Ientity;
+
+
 
 
 @Entity
-public class Visitor {
+public class Visitor implements Ientity {
 
 	@Id
 	private String cpf;
@@ -84,11 +87,6 @@ public class Visitor {
 
 	}
 
-	public static List<Visitor> list(EntityManager em) {
-
-		return em.createQuery("SELECT e FROM Visitor e", Visitor.class).getResultList();
-
-	}
 
 	// O metodo validateToken(ValidarFicha) não fazeria mais sentido estar na classe
 	// Employee?
@@ -96,4 +94,22 @@ public class Visitor {
 
 	}
 
+	@Override
+	public Object getKey() {
+		
+		return this.cpf;
+	}
+
+
+	@Override
+	public String toString() {
+		return "Visitor [cpf=" + cpf + ", name=" + name + ", password=" + password + ", rg=" + rg + ", phone=" + phone
+				+ ", employRgstry=" + employRgstry + "]";
+	}
+
+
+
+	
+	
+	
 }
