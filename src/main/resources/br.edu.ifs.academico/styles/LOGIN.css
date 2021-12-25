@@ -1,0 +1,44 @@
+.root {
+	-fx-background-image: url('../img/back.png');
+	-fx-background-size: cover; 
+}
+
+.label {
+	-fx-font-size: 12pt;
+	-fx-text-background-color: #05445E;
+}
+
+#header {
+	-fx-font-size: 28pt;
+}
+
+#title {
+	-fx-font-size: 60pt;
+	-fx-text-background-color: #FFFFFF;
+}
+
+#commitButton {
+	-fx-font-size: 12pt;
+	-fx-text-fill: #FFFFFF;
+	-fx-background-color: #6AABD2;
+}
+
+#commitButton:hover { 
+	-fx-background-color: #4aa1bd;
+}
+
+#subtitle {
+	-fx-font-size: 15pt;
+	-fx-text-background-color: #FFFFFF;
+}
+
+#vBoxMain {
+	/*-fx-background-color: rgba(235,243,245,0.2);*/
+	-fx-background-color: rgba(151,175,190,0.2);
+}
+
+#vBoxTitle {
+	/*-fx-background-color: rgba(104,134,159,0.3);*/
+	-fx-background-color: rgba(66,95,128,0.3);
+}
+ 
