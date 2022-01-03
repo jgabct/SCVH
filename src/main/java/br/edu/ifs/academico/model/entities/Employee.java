@@ -1,127 +1,121 @@
 package br.edu.ifs.academico.model.entities;
 
-import br.edu.ifs.academico.model.interfaces.IEntity;
-import br.edu.ifs.academico.utils.FriendlyName;
-import br.edu.ifs.academico.utils.InputLineCustomContainer;
-import br.edu.ifs.academico.utils.enums.EmployeeType;
-import br.edu.ifs.academico.utils.enums.FieldType;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+
+import br.edu.ifs.academico.model.interfaces.IEntity;
+import br.edu.ifs.academico.utils.annotations.Bloq;
+import br.edu.ifs.academico.utils.annotations.NameField;
+import br.edu.ifs.academico.utils.enums.EmployeeType;
+
 
 public class Employee implements IEntity {
 
-    @FriendlyName(value="Matrícula",	methodToSave="setRegistration", 	
-    		nameClassInput=String.class,  		fieldType=FieldType.TEXTFIELD,  order=0) 	
+    @NameField(value = "Matrícula")
+    @Bloq
     private String registration;
     
-    @FriendlyName(value="Cpf",			methodToSave="setCpf",				
-    		nameClassInput=String.class,		fieldType=FieldType.TEXTFIELD,	order=1) 	
+    @NameField(value = "Nome")	
+    private String name;
+
+    @NameField(value = "CPF")
     private String cpf;
-    
-    @FriendlyName(value="Rg",			methodToSave="setRg",				
-    		nameClassInput=String.class,		fieldType=FieldType.TEXTFIELD,	order=2) 	
-    private String rg;
-    
-    @FriendlyName(value="Telefone",		methodToSave="setNumberPhone",		
-    		nameClassInput=String.class,		fieldType=FieldType.TEXTFIELD,	order=3) 	
+	
+    @NameField(value = "Telefone")
     private String numberPhone;
     
-    @FriendlyName(value="Cargo",		methodToSave="setOffice",			
-    		nameClassInput=String.class,	fieldType=FieldType.COMBOBOX,	order = 4)
-    private EmployeeType office;
+    @NameField(value = "Senha")
+    private String password;
     
-//    private Sector sector;
+    @NameField(value = "Cargo")
+    private EmployeeType post;
+    
+    @NameField(value = "Setor")
+    private Sector sector;
 
     public Employee() {/*Construtor vazio*/}
-
-    public Employee(String registration, String cpf, String rg, String numberPhone, EmployeeType office/*, Sector sector*/) {
-        setRegistration(registration);
+    
+    public Employee(String registration, String name, String cpf, String numberPhone, 
+    		String password, @SuppressWarnings("exports") EmployeeType enrollment, Sector sector) {
+    	setRegistration(registration);
+        setName(name);
         setCpf(cpf);
-        setRg(rg);
         setNumberPhone(numberPhone);
-        setOffice(office.getOffice());
-//        this.sector = sector;
+        setPassword(password);
+        setPost(enrollment);
+        setSectorCode(sector);
     }
-
-//    public void register(Employee emplo) {
-//
-//    }
-
-    public String getRegistration() {return this.registration;}
+    
+    public String getRegistration() { return this.registration; }
 
     public void setRegistration(String registration) {
         this.registration = registration;
     }
 
-    public String getCpf() {return this.cpf;}
+    public String getName() { return this.name;	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCpf() { return this.cpf; }
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
     }
 
-    public String getRg() {return this.rg;}
-
-    public void setRg(String rg) {
-        this.rg = rg;
-    }
-
-    public String getPhone() {return this.numberPhone;}
+    public String getNumberPhone() { return this.numberPhone; }
 
     public void setNumberPhone(String numberPhone) {
         this.numberPhone = numberPhone;
     }
     
-    public EmployeeType getOffice() {
-		return this.office;
+    public String getPassword() { return this.password; }
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
-	public void setOffice(String office) {
-		this.office = EmployeeType.pegarFuncaoPorValor(office);
-		
+	@SuppressWarnings("exports")
+	public EmployeeType getPost() { return this.post; }
+
+	public void setPost(@SuppressWarnings("exports") EmployeeType enrollment) {
+		this.post = enrollment;
 	}
 
-//    public Sector getSector() {
-//        return sector;
-//    }
-//
-//    public void setSector(Sector sector) {
-//        this.sector = sector;
-//
-//    }
+    public Sector getSector() { return this.sector; }
+
+    public void setSectorCode(Sector sector) {
+        this.sector = sector;
+
+    }
 
 	@Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Employee employee = (Employee) o;
-        return registration.equals(employee.registration) && cpf.equals(employee.cpf) && rg.equals(employee.rg);
-    }
+	public int hashCode() {
+		return Objects.hash(cpf, registration);
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(registration, cpf, rg);
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Employee other = (Employee) obj;
+		return Objects.equals(cpf, other.cpf) && Objects.equals(registration, other.registration);
+	}
 
-    @Override
+	@Override
     public String getKey() {
-        return this.registration;
+        return getRegistration();
     }
-
+    
 	@Override
 	public String toString() {
-		return "Employee [registration=" + registration + ", cpf=" + cpf + ", rg=" + rg + ", numberPhone=" + numberPhone
-				+ ", office=" + office + "]";
+		return "Employee [registration=" + registration + ", name=" + name + ", cpf=" + cpf + ", numberPhone="
+				+ numberPhone + ", password=" + password + ", post=" + post + ", sector=" + sector + "]";
 	}
-    
-	public static List<EmployeeType> getOffices() {
-		return  Arrays.asList(EmployeeType.values());
-	}
-    
 
 }
 

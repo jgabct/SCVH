@@ -6,9 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.ResourceBundle;
 
 import br.edu.ifs.academico.application.Main;
-import br.edu.ifs.academico.utils.FriendlyName;
 import br.edu.ifs.academico.utils.InputLineCustomContainer;
 import br.edu.ifs.academico.utils.LoadScene;
+import br.edu.ifs.academico.utils.annotations.FriendlyName;
 import br.edu.ifs.academico.utils.components.ComponentsForm;
 import br.edu.ifs.academico.utils.enums.Frame;
 import br.edu.ifs.academico.utils.enums.SystemObjects;

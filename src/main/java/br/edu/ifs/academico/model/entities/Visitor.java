@@ -1,25 +1,27 @@
 package br.edu.ifs.academico.model.entities;
 
+import java.util.Objects;
+
 import br.edu.ifs.academico.model.interfaces.IEntity;
-import br.edu.ifs.academico.utils.FriendlyName;
-import br.edu.ifs.academico.utils.enums.FieldType;
+import br.edu.ifs.academico.utils.annotations.NameField;
 
 public class Visitor implements IEntity {
 
-	@FriendlyName(value="CPF",		methodToSave="setCpf", 			nameClassInput=String.class,	fieldType = FieldType.TEXTFIELD,	order=1) 
+	@NameField(value="CPF")		 
 	private String cpf;
-	@FriendlyName(value="Nome",		methodToSave="setName", 		nameClassInput=String.class,	fieldType = FieldType.TEXTFIELD,	order=0) 
+	@NameField(value="Nome")
 	private String name;
-	@FriendlyName(value="RG",		methodToSave="setRg", 			nameClassInput=String.class,	fieldType = FieldType.TEXTFIELD,	order=2) 
+	@NameField(value="RG")
 	private String rg;
-	@FriendlyName(value="Telefone",	methodToSave="setNumberPhone",	nameClassInput=String.class,	fieldType = FieldType.TEXTFIELD,	order=3) 
+	@NameField(value = "Telefone")
 	private String numberPhone;
+	
 	private String employeeRegistry;
 
     // O query necessita do construtor padrão (Vazio)
     public Visitor() {/*Construtor vazio*/}
 
-    public Visitor(String cpf, String name, String password, String rg, String numberPhone, String employeeRegistry) {
+    public Visitor(String cpf, String name, String rg, String numberPhone, String employeeRegistry) {
         setCpf(cpf);
         setName(name);
         setRg(rg);
@@ -66,12 +68,27 @@ public class Visitor implements IEntity {
     public void setEmployeeRegistry(String employeeRegistry) {
         this.employeeRegistry = employeeRegistry;
     }
-
-//    public void register(Visitor visitor) {
-//
-//    }
-
+    
     @Override
+	public int hashCode() {
+		return Objects.hash(cpf, employeeRegistry, name, numberPhone, rg);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Visitor other = (Visitor) obj;
+		return Objects.equals(cpf, other.cpf) && Objects.equals(employeeRegistry, other.employeeRegistry)
+				&& Objects.equals(name, other.name) && Objects.equals(numberPhone, other.numberPhone)
+				&& Objects.equals(rg, other.rg);
+	}
+
+	@Override
     public String getKey() {
         return getCpf();
     }

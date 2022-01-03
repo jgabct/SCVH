@@ -2,6 +2,13 @@ package br.edu.ifs.academico.utils.components;
 
 import java.util.List;
 
+import br.edu.ifs.academico.controllers.administrative.AdministrativeBed;
+import br.edu.ifs.academico.controllers.administrative.AdministrativeEmployee;
+import br.edu.ifs.academico.controllers.administrative.AdministrativePatient;
+import br.edu.ifs.academico.controllers.administrative.AdministrativeRoom;
+import br.edu.ifs.academico.controllers.administrative.AdministrativeRule;
+import br.edu.ifs.academico.controllers.administrative.AdministrativeSector;
+import br.edu.ifs.academico.controllers.administrative.AdministrativeVisitor;
 import br.edu.ifs.academico.utils.CustomButton;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,29 +20,54 @@ import javafx.stage.Stage;
 public class ComponentsAdministratorDashboard extends Component {
 
 	private final CustomButton roomButton = new CustomButton("Quartos", "idRoomButton",
-			event -> {System.out.println("roomButton diz: click");}
+				event -> {
+					System.out.println("roomButton diz: click");
+					new AdministrativeRoom();
+				}
 			);
+	
 	private final CustomButton bedButton = new CustomButton("Camas", "idBedButton",
-			event -> {System.out.println("bedButton diz: click");}
+				event -> {
+					System.out.println("bedButton diz: click");
+					new AdministrativeBed();
+				}
 			);
+	
 	private final CustomButton ruleButton = new CustomButton("Regras", "idRuleButton",
-			event -> {System.out.println("ruleButton diz: click");}
+				event -> {
+					System.out.println("ruleButton diz: click");
+					new AdministrativeRule();
+				}
 			);
-	private final CustomButton employeeButton = new CustomButton("Funcionários", "idEmployeeButton",
-			event -> {System.out.println("employeeButton diz: click");}
+
+	private final CustomButton employeeButton = new CustomButton("Funcion�rios", "idEmployeeButton",
+				event -> {
+					System.out.println("employeeButton diz: click");
+					new AdministrativeEmployee();
+				}
 			);
+	
 	private final CustomButton patientsButton = new CustomButton("Pacientes", "idPatientsButton",
-			event -> {System.out.println("patientsButton diz: click");}
+				event -> {
+					System.out.println("patientsButton diz: click");
+					new AdministrativePatient();
+				}
 			);
 	private final CustomButton visitorsButton = new CustomButton("Visitantes", "idVisitorsButton",
-			event -> {System.out.println("visitorsButton diz: click");}
+				event -> {
+					System.out.println("visitorsButton diz: click");
+					new AdministrativeVisitor();
+				}
 			);
 	private final CustomButton sectorButton = new CustomButton("Setores", "idSectorButton",
-			event -> {System.out.println("sectorButton diz: click");}
+				event -> {
+					System.out.println("sectorButton diz: click");
+					new AdministrativeSector();
+				}
 			);
-	private final CustomButton administratorButton = new CustomButton("Admin", "idAdministratorButton",
-			event -> {System.out.println("sectorButton diz: click");}
-			);
+//	private final CustomButton administratorButton = new CustomButton("Admin", "idAdministratorButton",
+//			event -> {System.out.println("sectorButton diz: click");}
+//			);
 //	private final CustomButton reportsButton = new CustomButton("Relatórios", "idReportsButton",
 //			event -> {System.out.println("reportsButton diz: click");}
 //			);
@@ -55,7 +87,7 @@ public class ComponentsAdministratorDashboard extends Component {
 		getButtonsList().add(sectorButton);
 		getButtonsList().add(roomButton);
 		getButtonsList().add(bedButton);
-		getButtonsList().add(administratorButton);
+//		getButtonsList().add(administratorButton);
 //		getButtonsList().add(reportsButton);
 	}
 	
@@ -68,7 +100,7 @@ public class ComponentsAdministratorDashboard extends Component {
 			((CustomButton) btn).setPrefSize(getWidthButton(),getHeightButton());
 			BorderPane.setAlignment(btn,Pos.BOTTOM_CENTER);
 			pane.setBottom(btn);
-			pane.setStyle("-fx-background-color: rgba(251,199,90,0.5);");
+//			pane.setStyle("-fx-background-color: rgba(251,199,90,0.5);");
 			getPaneButtonsList().add(pane);
 		}
 	}

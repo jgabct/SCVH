@@ -1,4 +1,4 @@
-package br.edu.ifs.academico.utils;
+package br.edu.ifs.academico.utils.annotations;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -17,7 +17,5 @@ public @interface FriendlyName{
 	Class<?> nameClassInput();
 	@SuppressWarnings("exports")
 	FieldType fieldType();
-	@SuppressWarnings("exports")
-	EmployeeType[] listItens() default {};
 	int order();
 }

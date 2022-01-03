@@ -137,25 +137,43 @@ public class Rule implements IEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Rule rule = (Rule) o;
-        return ruleCode.equals(rule.ruleCode);
-    }
+	public int hashCode() {
+		return Objects.hash(afternoonEntryHour, afternoonExitHour, maximumVisitorsPerPatient, maximumVisitorsPerRoom,
+				morningEntryHour, morningExitHour, nightEntryHour, nightExitHour, ruleCode, visitDuration);
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(ruleCode);
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Rule other = (Rule) obj;
+		return Objects.equals(afternoonEntryHour, other.afternoonEntryHour)
+				&& Objects.equals(afternoonExitHour, other.afternoonExitHour)
+				&& Objects.equals(maximumVisitorsPerPatient, other.maximumVisitorsPerPatient)
+				&& Objects.equals(maximumVisitorsPerRoom, other.maximumVisitorsPerRoom)
+				&& Objects.equals(morningEntryHour, other.morningEntryHour)
+				&& Objects.equals(morningExitHour, other.morningExitHour)
+				&& Objects.equals(nightEntryHour, other.nightEntryHour)
+				&& Objects.equals(nightExitHour, other.nightExitHour) && Objects.equals(ruleCode, other.ruleCode)
+				&& Objects.equals(visitDuration, other.visitDuration);
+	}
 
-    //    public void register(Rule rule) {
-//
-//    }
-
-    @Override
+	@Override
     public String getKey() {
         return getRuleCode();
     }
+
+	@Override
+	public String toString() {
+		return "Rule [ruleCode=" + ruleCode + ", morningEntryHour=" + morningEntryHour + ", morningExitHour="
+				+ morningExitHour + ", afternoonEntryHour=" + afternoonEntryHour + ", afternoonExitHour="
+				+ afternoonExitHour + ", nightEntryHour=" + nightEntryHour + ", nightExitHour=" + nightExitHour
+				+ ", maximumVisitorsPerPatient=" + maximumVisitorsPerPatient + ", maximumVisitorsPerRoom="
+				+ maximumVisitorsPerRoom + ", visitDuration=" + visitDuration + "]";
+	}
 
 }

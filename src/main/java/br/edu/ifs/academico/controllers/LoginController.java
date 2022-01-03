@@ -81,30 +81,22 @@ public class LoginController implements Initializable {
             System.out.println(employeeEnrolment);
             return;
         }
-        
-        Main.setEmployee(new Employee());
-        
+      
         try {
-            switch (employeeEnrolment) {
-                case "123" -> {
-                    System.out.println(EmployeeType.RECEPTIONIST);
-                    Main.getEmployee().setOffice("Recepcionista");
-                }
-                case "456" -> {
-                    System.out.println(EmployeeType.ADMINISTRATOR);
-                    Main.getEmployee().setOffice("Administrador");
-                }
-                case "789" -> {
-                    System.out.println(EmployeeType.NURSE);
-                    Main.getEmployee().setOffice("Enfermeira");
-                }
-                default -> throw new IllegalArgumentException("Unexpected value: " + employeeEnrolment);
-            }
-            
+//            Employee emp = Main.getDatabase().getTableEmployee().entrySet().stream().filter( i -> i.getKey().equals(employeeEnrolment)).findFirst().get().getValue();
+//            
+//            Main.setEmployee(emp);
+//            
+//            System.out.println(emp.toString());
+            Employee em = new Employee();
+        	em.setPost(EmployeeType.ADMINISTRATOR);
+        	Main.setEmployee(em);
+        	
             new DashboardController();
             
         } catch (Exception e) {
-            e.printStackTrace();
+        	System.err.println(e);
+            return;
         }
 
 

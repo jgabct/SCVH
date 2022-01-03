@@ -1,22 +1,22 @@
 package br.edu.ifs.academico.controllers;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import br.edu.ifs.academico.application.Main;
-import br.edu.ifs.academico.model.entities.Employee;
-import br.edu.ifs.academico.utils.FriendlyName;
+import br.edu.ifs.academico.model.entities.Sector;
 import br.edu.ifs.academico.utils.LoadScene;
-import br.edu.ifs.academico.utils.enums.EmployeeType;
-import br.edu.ifs.academico.utils.enums.FieldType;
+import br.edu.ifs.academico.utils.annotations.Bloq;
+import br.edu.ifs.academico.utils.annotations.FriendlyName;
+import br.edu.ifs.academico.utils.annotations.NameField;
 import br.edu.ifs.academico.utils.enums.Frame;
 import br.edu.ifs.academico.utils.enums.SystemObjects;
 import javafx.fxml.FXML;
@@ -30,18 +30,27 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class FormControllerTest implements Initializable {
-
+public class FormControllerTest <T> implements Initializable {
+	
     private Stage insideStage;
     private SystemObjects targetObject;
+    
+    private T object;
+    
+    private LinkedList<InputLine> listInputText;
 
     @FXML private VBox shelf;
     
     @FXML private Button cancelButton;
     @FXML private Button finishButton;
     
-    @SuppressWarnings("exports")
-	public FormControllerTest(SystemObjects targetObject) {
+    public FormControllerTest(SystemObjects targetObject) {
+    	this.targetObject = targetObject;
+    	toAssemble();
+    }
+    
+	public FormControllerTest(T obj ,SystemObjects targetObject) {
+    	this.object = obj;
     	this.targetObject = targetObject;
     	toAssemble();
     }
@@ -51,23 +60,25 @@ public class FormControllerTest implements Initializable {
 
         System.out.println("Init - initialize - Controller Form");
         
-        LinkedHashMap<FriendlyName, InputLine> comp = 
-        		getListFieldCreation(targetObject.getSystemObjectsType());
+//        LinkedHashMap<FriendlyName, InputLine> comp = 
+//        		getListFieldCreation(targetObject.getSystemObjectsType());
         
-        comp.entrySet().stream().forEach(map -> {
-        	if(map.getKey().fieldType() == FieldType.COMBOBOX) {
-        		
-        		List<EmployeeType> li = Employee.getOffices();
-
-        		List<String> n = li.stream()
-        	    .map(it -> it.getOffice())
-        	    .collect(Collectors.toList());
-        		
-        		map.getValue().setListComboBox(n);
-        	}
-        });
+//        comp.entrySet().stream().forEach(map -> {
+//        	if(map.getKey().fieldType() == FieldType.COMBOBOX) {
+//        		
+//        		List<EmployeeType> li = Employee.getOffices();
+//
+//        		List<String> n = li.stream()
+//        	    .map(it -> it.getOffice())
+//        	    .collect(Collectors.toList());
+//        		
+//        		map.getValue().setListComboBox(n);
+//        	}
+//        });
         
-        shelf.getChildren().addAll(comp.values());
+        listInputText = getListFieldCreation(targetObject.getSystemObjectsType());
+        
+        shelf.getChildren().addAll(listInputText);
         
         cancelButton.setOnAction(event -> {
         	System.out.println("cancelButton diz: click");
@@ -76,20 +87,32 @@ public class FormControllerTest implements Initializable {
         
         finishButton.setOnAction(event -> {
         	System.out.println("finishButton diz: click");
-        	System.out.println(getObject(targetObject.getSystemObjectsType(), comp).toString());
+//        	System.out.println(getObject(targetObject.getSystemObjectsType(), comp).toString());
         	exit();
         });
        
+        try {
+			setItemList(object);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			System.err.println("Deu ruim 1");
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			System.err.println("Deu ruim 2");
+		}
+        
     }
     
     private void toAssemble() {
-        try {
-        	
+        try { 	
         	System.out.println("Init Constructor Form");
+       
         	insideStage = Main.getGlobalStage(); 
-        	insideStage.setTitle("SCVH - Formulário");    	
+        	insideStage.setTitle("SCVH - Formulário");
+        	
         	LoadScene<FormControllerTest> lScene = new LoadScene<>(this);
             insideStage.setScene(lScene.toCharge(Frame.FORM));
+            
             insideStage.show();
             
         } catch (IOException e) {
@@ -100,28 +123,37 @@ public class FormControllerTest implements Initializable {
 	
     private void exit() { new DashboardController(); }
     
-    public static <T> LinkedHashMap<FriendlyName, InputLine> getListFieldCreation(Class<T> typeClass) {
-		return (Arrays.asList(typeClass.getDeclaredFields()).stream()
-				.filter(trinket -> trinket.isAnnotationPresent(FriendlyName.class) == true)
-				.collect(
-						LinkedHashMap<FriendlyName, InputLine>::new,
-						(map, trinket)-> map.put(
-							trinket.getAnnotation(FriendlyName.class),
-							new InputLine(trinket.getAnnotation(FriendlyName.class))
-						),
-						Map::putAll))
-				.entrySet()
-				.stream()
-				.sorted((i1, i2) -> Integer.compare(i1.getKey().order(), i2.getKey().order()))
-				.collect(
-					Collectors.toMap(
-							Map.Entry::getKey, Map.Entry::getValue,
-							(e1, e2) -> e1, 
-							LinkedHashMap::new
-						)
-				);	
-	}
+//    public static <T> LinkedHashMap<FriendlyName, InputLine> getListFieldCreation(Class<T> typeClass) {
+//		return (Arrays.asList(typeClass.getDeclaredFields()).stream()
+//				.filter(trinket -> trinket.isAnnotationPresent(FriendlyName.class) == true)
+//				.collect(
+//						LinkedHashMap<FriendlyName, InputLine>::new,
+//						(map, trinket)-> map.put(
+//							trinket.getAnnotation(FriendlyName.class),
+//							new InputLine(trinket.getAnnotation(FriendlyName.class))
+//						),
+//						Map::putAll))
+//				.entrySet()
+//				.stream()
+//				.sorted((i1, i2) -> Integer.compare(i1.getKey().order(), i2.getKey().order()))
+//				.collect(
+//					Collectors.toMap(
+//							Map.Entry::getKey, Map.Entry::getValue,
+//							(e1, e2) -> e1, 
+//							LinkedHashMap::new
+//						)
+//				);	
+//	}
 	
+    public static LinkedList<InputLine> getListFieldCreation(Class<?> typeClass) {
+    	return List.of(typeClass.getDeclaredFields())
+    		.stream()
+    		.filter(trinket -> trinket.isAnnotationPresent(NameField.class))
+    		.collect(LinkedList<InputLine>::new, 
+    				(list, trinket) -> list.add(new InputLine(trinket)), 
+    				List::addAll);
+    }
+    
 	public static <T> Object getObject(Class<T> clz, LinkedHashMap<FriendlyName, InputLine> list) {
 		Object obj = null;
 		try {
@@ -148,10 +180,51 @@ public class FormControllerTest implements Initializable {
 		return obj;
 
 	}
+	
+	public void setItemList(T obj) throws IllegalArgumentException, IllegalAccessException {
+		System.out.println(obj.toString());
+		
+		if(obj != null) {
+			Class<?> clazz = obj.getClass();
+			for(Field field : clazz.getDeclaredFields()) {
+				field.setAccessible(true);
+				for(InputLine iL : listInputText) {
+					if(field.equals(iL.getFieldF())) {
+						if(field.get(obj) instanceof Sector) {
+							iL.setTextInputLine(((Sector) field.get(obj)).getKey());
+							continue;
+						}
+						iL.setTextInputLine((String) field.get(obj));
+					}
+				}
+			}
+		}
+	}
     
      public static class InputLine extends HBox{
+    	 	private Field fieldF;
     	 	private TextField field;
     		private ComboBox<Object> fieldBox;
+    		
+    		public InputLine(NameField annot) {
+    			setPrefSize(600, 40);
+    			setSpacing(10);
+    			setAlignment(Pos.CENTER);
+    			
+    			setTitle(annot.value());
+    			setField();
+    		}    		
+    		
+    		public InputLine(Field field) {
+    			setPrefSize(600, 40);
+    			setSpacing(10);
+    			setAlignment(Pos.CENTER);
+    			
+    			this.fieldF = field;
+    			
+    			setTitle(field.getAnnotation(NameField.class).value());
+    			setField();
+    		}
     		
     		public InputLine(FriendlyName annot){
     			setPrefSize(600, 40);
@@ -196,6 +269,13 @@ public class FormControllerTest implements Initializable {
     			fieldBox.getItems().addAll(list);
     		}
     		
+    		public void setTextInputLine(String text){
+    			field.setText(text);
+    			if(fieldF.isAnnotationPresent(Bloq.class)) {
+    				field.setEditable(false);
+    			}
+    		}
+    		
     		public String getInputLineText() {
     			return field.getText();
     		}
@@ -205,6 +285,15 @@ public class FormControllerTest implements Initializable {
     			System.out.println("-> "+resp);
     			return resp;
     		}
+
+			public Field getFieldF() {
+				return fieldF;
+			}
+
+			public void setFieldF(Field fieldF) {
+				this.fieldF = fieldF;
+			}
+    		
      }
     
 }

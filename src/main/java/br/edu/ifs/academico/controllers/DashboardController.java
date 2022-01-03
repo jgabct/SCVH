@@ -45,7 +45,7 @@ public class DashboardController implements Initializable {
     //Início do Construtor da Classe
     
 	public DashboardController(){
-        this.employeeType = Main.getEmployee().getOffice();
+        this.employeeType = Main.getEmployee().getPost();
         toAssemble();
     }
 

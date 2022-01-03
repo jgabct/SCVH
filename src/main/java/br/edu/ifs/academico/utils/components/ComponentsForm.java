@@ -8,8 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import br.edu.ifs.academico.utils.FriendlyName;
 import br.edu.ifs.academico.utils.InputLineCustomContainer;
+import br.edu.ifs.academico.utils.annotations.FriendlyName;
 
 public class ComponentsForm {
 	

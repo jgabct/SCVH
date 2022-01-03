@@ -1,5 +1,8 @@
 package br.edu.ifs.academico.utils.enums;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import br.edu.ifs.academico.model.entities.*;
 
 
@@ -15,6 +18,14 @@ public enum SystemObjects {
 
 	private final Class<?> systemObjectsType;
 	
+	private static final Map<Class<?>, SystemObjects> objectByClass = new HashMap<>();
+	
+	static{
+		for(SystemObjects employeeType : SystemObjects.values()) {
+			objectByClass.put(employeeType.getSystemObjectsType(), employeeType);
+		}
+	}
+	
 	SystemObjects(Class<?> systemObjectsType) {
 		this.systemObjectsType = systemObjectsType;
 	}
@@ -23,4 +34,8 @@ public enum SystemObjects {
 		return systemObjectsType;
 	}
 
+	public static SystemObjects takeObjectByClass(Class<?> clazz){
+		return objectByClass.get(clazz);
+	}
+	
 }

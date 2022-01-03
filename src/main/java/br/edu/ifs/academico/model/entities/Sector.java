@@ -1,26 +1,37 @@
 package br.edu.ifs.academico.model.entities;
 
-import br.edu.ifs.academico.model.interfaces.IEntity;
-
-import java.util.List;
 import java.util.Objects;
+
+import br.edu.ifs.academico.model.interfaces.IEntity;
+import br.edu.ifs.academico.utils.annotations.NameField;
 
 public class Sector implements IEntity {
 
+	@NameField(value = "Código")
     private String sectorCode;
-    private String acronym;
-    private String sectorName;
-    private Rule rule;
-    private List<Room> rooms;
+    
+	@NameField(value = "Sigla")
+	private String acronym;
+    
+	@NameField(value = "Nome")
+	private String sectorName;
+    
+	@NameField(value = "Regra")
+	private Rule rule;
 
     public Sector() {/*Construtor vazio*/}
 
-    public Sector(String sectorCode, String acronym, String sectorName, Rule rule, List<Room> rooms) {
+    public Sector(String sectorCode, String acronym, String sectorName) {
         setSectorCode(sectorCode);
         setAcronym(acronym);
         setSectorName(sectorName);
-        setRule(rule);
-        setRooms(rooms);
+    }
+    
+    public Sector(String sectorCode, String acronym, String sectorName, Rule rule) {
+        setSectorCode(sectorCode);
+        setAcronym(acronym);
+        setSectorName(sectorName);
+        setRuleCode(rule);
     }
 
     public String getSectorCode() {
@@ -47,42 +58,40 @@ public class Sector implements IEntity {
         this.sectorName = sectorName;
     }
 
-    public Rule getRule() {
+    public Rule getRuleCode() {
         return this.rule;
     }
 
-    public void setRule(Rule rule) {
+    public void setRuleCode(Rule rule) {
         this.rule = rule;
     }
 
-    public List<Room> getRooms() {
-        return this.rooms;
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(sectorCode);
+	}
 
-    public void setRooms(List<Room> rooms) {
-        this.rooms = rooms;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Sector other = (Sector) obj;
+		return Objects.equals(sectorCode, other.sectorCode);
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Sector sector = (Sector) o;
-        return sectorCode.equals(sector.sectorCode);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(sectorCode);
-    }
-
-    //    public void register(Sector sector) {
-//
-//    }
-
-    @Override
+	@Override
     public String getKey() {
         return getSectorCode();
     }
+
+	@Override
+	public String toString() {
+		return "Sector [sectorCode=" + sectorCode + ", acronym=" + acronym + ", sectorName=" + sectorName + ", rule="
+				+ rule + "]";
+	}
 
 }
