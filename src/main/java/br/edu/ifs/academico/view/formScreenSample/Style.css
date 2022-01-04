@@ -1,0 +1,11 @@
+#anchorPane{
+     -fx-background-color: #CFD9DE;   
+}
+
+.label {
+	-fx-background-color: #B7CFDC;
+}
+
+#hBoxButtons {
+	-fx-spacing:15;
+}
