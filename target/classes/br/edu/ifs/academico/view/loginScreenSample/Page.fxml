@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane prefHeight="500.0" prefWidth="700.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17">
+   <children>
+      <Pane fx:id="backgroundPaneLeft" prefHeight="500.0" prefWidth="300.0">
+         <children>
+            <VBox fx:id="vBoxMain" layoutX="60.0" layoutY="150.0" prefHeight="200.0" prefWidth="180.0">
+               <children>
+                  <VBox prefHeight="55.0" prefWidth="180.0">
+                     <children>
+                        <Label prefHeight="20.0" prefWidth="180.0" text="Matricula">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField prefHeight="25.0" prefWidth="180.0" />
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="55.0" prefWidth="180.0">
+                     <children>
+                        <Label prefHeight="20.0" prefWidth="180.0" text="Senha">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField prefHeight="25.0" prefWidth="180.0" />
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+      </Pane>
+      <Pane fx:id="backgroundPaneRight" layoutX="300.0" prefHeight="500.0" prefWidth="400.0" />
+   </children>
+</AnchorPane>
