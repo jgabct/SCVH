@@ -62,7 +62,7 @@ public class AdministrativeEmployee implements Initializable{
 		colCpf.setCellValueFactory(cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getCpf()));
 		colNumberPhone.setCellValueFactory(cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getPhone()));
 		colOffice.setCellValueFactory(cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getPost().getOffice()));
-		colSector.setCellValueFactory(cellData -> new SimpleStringProperty("nope"));
+		colSector.setCellValueFactory(cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getSector().getKey()));
 		
 		ObservableList<Employee> teamMembers = FXCollections.observableArrayList(go.list());
 		
@@ -117,7 +117,7 @@ public class AdministrativeEmployee implements Initializable{
         	System.out.println("Init Constructor Adm");
         	insideStage = Main.getGlobalStage();
         	
-        	insideStage.setTitle("SCVH - Painel Administrativo - Funcion·rios");    	
+        	insideStage.setTitle("SCVH - Painel Administrativo - Funcion√°rios");    	
         	LoadScene<AdministrativeEmployee> lScene = new LoadScene<>(this);
             insideStage.setScene(lScene.toCharge(Frame.ADMEMPLOYEE));
             
