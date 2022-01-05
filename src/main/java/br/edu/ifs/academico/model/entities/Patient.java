@@ -1,35 +1,73 @@
 package br.edu.ifs.academico.model.entities;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
 import br.edu.ifs.academico.model.interfaces.IEntity;
+import br.edu.ifs.academico.model.services.GenericOperations;
+import br.edu.ifs.academico.utils.annotations.Blocked;
+import br.edu.ifs.academico.utils.annotations.ItIsABox;
 import br.edu.ifs.academico.utils.annotations.NameField;
 
-import java.util.Objects;
-
+@Entity
 public class Patient implements IEntity {
-	
+
+	@Id
+	@Blocked
 	@NameField(value = "Código de Referência")
-    private String linkCode;
+	private String linkCode;
 	
 	@NameField(value = "Nome")
-    private String name;
+	private String name;
 	
+	private String employeeRegistry;
+
 	@NameField(value = "Data de Nascimento")
-    private String birthDate;
-	
-    private String employeeRegistry;
-    
+	private LocalDate birthDate;
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pacient")
+	private Set<Visit> visits;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "occupiedBedId", referencedColumnName = "propertyNumber")
 	@NameField(value = "Leito")
-    private String propertyNumber;
+	@ItIsABox
+	private Bed occupiedBed;
 
-    public Patient() {/*Construtor vazio*/}
+//    public Patient() {/*Construtor vazio*/}
+//
+//    public Patient(String linkCode, String name, LocalDate birthDate, String employeeRegistry, String propertyNumber) {
+//        setLinkCode(linkCode);
+//        setName(name);
+//        setBirthDate(birthDate);
+//        setEmployeeRegistry(employeeRegistry);
+//        setPropertyNumber(propertyNumber); //leito
+//    }
+	
+	public Patient() {/*Construtor vazio*/}
 
-    public Patient(String linkCode, String name, String birthDate, String employeeRegistry, String propertyNumber) {
-        setLinkCode(linkCode);
-        setName(name);
-        setBirthDate(birthDate);
-        setEmployeeRegistry(employeeRegistry);
-        setPropertyNumber(propertyNumber); //leito
-    }
+	public Patient(String linkCode, String name, String employeeRegistry, LocalDate birthDate, Bed occupiedBed) {
+		setLinkCode(linkCode);
+		setName(name);
+		setEmployeeRegistry(employeeRegistry);
+		setBirthDate(birthDate);
+		setOccupiedBed(occupiedBed);
+	}
+
+	public Patient(String linkCode, String name, String employeeRegistry, LocalDate birthDate, Bed occupiedBed, Set<Visit> visits) {
+		this(linkCode, name, employeeRegistry, birthDate, occupiedBed);
+		setVisits(visits);
+	}
 
     public String getLinkCode() {
         return this.linkCode;
@@ -47,11 +85,11 @@ public class Patient implements IEntity {
         this.name = name;
     }
 
-    public String getBirthDate() {
+    public LocalDate getBirthDate() {
 		return this.birthDate;
 	}
 
-	public void setBirthDate(String birthDate) {
+	public void setBirthDate(LocalDate birthDate) {
 		this.birthDate = birthDate;
 	}
 
@@ -63,12 +101,20 @@ public class Patient implements IEntity {
         this.employeeRegistry = employeeRegistry;
     }
 
-    public String getPropertyNumber() {
-		return this.propertyNumber;
+    public Bed getOccupiedBed() {
+		return occupiedBed;
 	}
 
-	public void setPropertyNumber(String propertyNumber) {
-		this.propertyNumber = propertyNumber;
+	public void setOccupiedBed(Bed occupiedBed) {
+		this.occupiedBed = occupiedBed;
+	}
+
+	public Set<Visit> getVisits() {
+		return visits;
+	}
+
+	public void setVisits(Set<Visit> visits) {
+		this.visits = visits;
 	}
 
 	@Override
@@ -88,17 +134,27 @@ public class Patient implements IEntity {
 		return Objects.equals(birthDate, other.birthDate) && Objects.equals(linkCode, other.linkCode)
 				&& Objects.equals(name, other.name);
 	}
+	
+	public void hospitalize(Patient pacient, Bed bed) {
+
+	}
 
 	@Override
     public String getKey() {
         return getLinkCode();
     }
+	
+	public static List<String> summaryValues() {
+		return new GenericOperations<Patient>(Patient.class).list()
+				.stream()
+				.map( patient -> patient.getKey())
+				.collect(Collectors.toList());
+	}
 
 	@Override
 	public String toString() {
-		return "Patient [linkCode=" + linkCode + ", name=" + name + ", birthDate=" + birthDate + ", employeeRegistry="
-				+ employeeRegistry + ", propertyNumber=" + propertyNumber + "]";
+		return "Patient [linkCode=" + linkCode + ", name=" + name + ", employeeRegistry=" + employeeRegistry
+				+ ", birthDate=" + birthDate + ", visits=" + visits + ", occupiedBed=" + occupiedBed + "]";
 	}
-
 	
 }

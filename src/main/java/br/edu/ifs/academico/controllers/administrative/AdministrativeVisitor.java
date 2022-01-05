@@ -6,9 +6,8 @@ import java.util.ResourceBundle;
 
 import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.controllers.DashboardController;
-import br.edu.ifs.academico.model.entities.Patient;
-import br.edu.ifs.academico.model.entities.Room;
 import br.edu.ifs.academico.model.entities.Visitor;
+import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.enums.Frame;
 import javafx.beans.property.SimpleStringProperty;
@@ -27,6 +26,8 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class AdministrativeVisitor implements Initializable{
+	
+    private GenericOperations<Visitor> go = new GenericOperations<>(Visitor.class);
 
     private Stage insideStage;
 	
@@ -54,9 +55,9 @@ public class AdministrativeVisitor implements Initializable{
 		colCpf.setCellValueFactory(cellData -> new SimpleStringProperty(((Visitor) cellData.getValue()).getCpf()));
 		colName.setCellValueFactory(cellData -> new SimpleStringProperty(((Visitor) cellData.getValue()).getName()));
 		colRg.setCellValueFactory(cellData -> new SimpleStringProperty(((Visitor) cellData.getValue()).getRg()));
-		colNumberPhone.setCellValueFactory(cellData -> new SimpleStringProperty(((Visitor) cellData.getValue()).getNumberPhone()));
+		colNumberPhone.setCellValueFactory(cellData -> new SimpleStringProperty(((Visitor) cellData.getValue()).getPhone()));
 		
-		ObservableList<Visitor> teamMembers = FXCollections.observableArrayList(Main.getDatabase().getTableVisitor());
+		ObservableList<Visitor> teamMembers = FXCollections.observableArrayList(go.list());
 		
 		table.setItems(teamMembers);
 		

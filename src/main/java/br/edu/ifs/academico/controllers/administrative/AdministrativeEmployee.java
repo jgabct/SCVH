@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.controllers.DashboardController;
 import br.edu.ifs.academico.model.entities.Employee;
-import br.edu.ifs.academico.model.entities.Patient;
+import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.enums.Frame;
 import javafx.beans.property.SimpleStringProperty;
@@ -26,6 +26,8 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class AdministrativeEmployee implements Initializable{
+	
+    private GenericOperations<Employee> go = new GenericOperations<>(Employee.class);
 
     private Stage insideStage;
 	
@@ -34,8 +36,8 @@ public class AdministrativeEmployee implements Initializable{
 	@FXML private TableColumn<Employee, String> colRegistration;
 	@FXML private TableColumn<Employee, String> colName;
 	@FXML private TableColumn<Employee, String> colCpf;
-	@FXML private TableColumn<Employee, String> colNumberPhone;
-	@FXML private TableColumn<Employee, String> colOffice;
+	@FXML private TableColumn<Employee, String> colPhone;
+	@FXML private TableColumn<Employee, String> colPost;
 	@FXML private TableColumn<Employee, String> colSector;
 
     @FXML private VBox centerPanel;
@@ -52,15 +54,28 @@ public class AdministrativeEmployee implements Initializable{
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 
-
-	    colRegistration.setCellValueFactory(cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getRegistration()));
-		colName	.setCellValueFactory(cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getName()));
-		colCpf.setCellValueFactory(cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getCpf()));
-		colNumberPhone.setCellValueFactory(cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getNumberPhone()));
-		colOffice.setCellValueFactory(cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getPost().getOffice()));
-		colSector.setCellValueFactory(cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getSector().getKey()));
+	    colRegistration.setCellValueFactory(
+	    		cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getRegistration())
+	    	);
+		colName	.setCellValueFactory(
+				cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getName())
+			);
+		colCpf.setCellValueFactory(
+				cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getCpf())
+			);
+		colPhone.setCellValueFactory(
+				cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getPhone())
+			);
+		colPost.setCellValueFactory(
+				cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getPost().getOffice())
+			);
+		colSector.setCellValueFactory(
+				cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getSector().getKey())
+			);
 		
-		ObservableList<Employee> teamMembers = FXCollections.observableArrayList(Main.getDatabase().getTableEmployee());
+		//
+		
+		ObservableList<Employee> teamMembers = FXCollections.observableArrayList(go.list());
 		
 		table.setItems(teamMembers);
 		

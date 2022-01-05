@@ -2,13 +2,13 @@ package br.edu.ifs.academico.controllers.administrative;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.controllers.DashboardController;
+import br.edu.ifs.academico.controllers.FormControllerTest;
 import br.edu.ifs.academico.model.entities.Bed;
-import br.edu.ifs.academico.model.entities.Employee;
+import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.enums.Frame;
 import br.edu.ifs.academico.utils.enums.SystemObjects;
@@ -19,7 +19,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -29,6 +28,8 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class AdministrativeBed implements Initializable{
+	
+	private GenericOperations<Bed> go = new GenericOperations<>(Bed.class);
 
     private Stage insideStage;
 	
@@ -36,6 +37,8 @@ public class AdministrativeBed implements Initializable{
 	
 	@FXML private TableColumn<Bed, String> colPropertyNumber;
 	@FXML private TableColumn<Bed, String> colBedNumber;
+	@FXML private TableColumn<Bed, String> colOccupied;
+	@FXML private TableColumn<Bed, String> colOccupyingPacient;
 
     @FXML private VBox centerPanel;
     
@@ -51,10 +54,22 @@ public class AdministrativeBed implements Initializable{
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 
-		colPropertyNumber.setCellValueFactory(cellData -> new SimpleStringProperty(((Bed) cellData.getValue()).getPropertyNumber()));
-		colBedNumber.setCellValueFactory(cellData -> new SimpleStringProperty(((Bed) cellData.getValue()).getBedNumber()));
+		colPropertyNumber.setCellValueFactory(
+				cellData -> new SimpleStringProperty(((Bed) cellData.getValue()).getPropertyNumber())
+			);
+		colBedNumber.setCellValueFactory(
+				cellData -> new SimpleStringProperty(((Bed) cellData.getValue()).getBedNumber())
+			);
+		colOccupied.setCellValueFactory(
+				cellData -> new SimpleStringProperty(((Bed) cellData.getValue()).isOccupied()?"Ocupado":"Livre")
+			);
+		colOccupyingPacient.setCellValueFactory(
+				cellData -> new SimpleStringProperty("Não tem")
+			);
 		
-		ObservableList<Bed> teamMembers = FXCollections.observableArrayList(Main.getDatabase().getTableBed());
+		//((Bed) cellData.getValue()).getOccupyingPacient().getKey()
+		
+		ObservableList<Bed> teamMembers = FXCollections.observableArrayList(go.list());
 		
 		table.setItems(teamMembers);
 		
@@ -78,6 +93,10 @@ public class AdministrativeBed implements Initializable{
 		
 		  addButton.setOnAction(event -> {
 	        	System.out.println("addButton diz: click");
+	        	
+	        	new FormControllerTest(SystemObjects.BED, go, this.getClass());
+	        	
+	        	
 	        });
 	        
 	        editButton.setOnAction(event -> {

@@ -1,20 +1,34 @@
 package br.edu.ifs.academico.model.entities;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 import br.edu.ifs.academico.model.interfaces.IEntity;
-import br.edu.ifs.academico.utils.annotations.Bloq;
-import br.edu.ifs.academico.utils.annotations.FriendlyName;
+import br.edu.ifs.academico.model.services.GenericOperations;
+import br.edu.ifs.academico.utils.annotations.Blocked;
 import br.edu.ifs.academico.utils.annotations.NameField;
-import br.edu.ifs.academico.utils.enums.FieldType;
 
+@Entity
 public class Bed implements IEntity {
 
-	@NameField(value="N° da Propriedade")
-	@Bloq
+	@Id
+	@Blocked
+	@NameField(value="N° da Propriedade") 
 	private String propertyNumber;
-    @NameField(value="N° da Cama") 
-    private String bedNumber;
+	
+	@NameField(value="N° da Cama") 
+	private String bedNumber;
+	
+	private boolean occupied;
+	
+	@OneToOne(fetch = FetchType.LAZY, mappedBy = "occupiedBed")
+	private Patient occupyingPacient;
 
     public Bed() {/*Constructor vazio*/}
 
@@ -22,7 +36,6 @@ public class Bed implements IEntity {
     	setPropertyNumber(propertyNumber);
     	setBedNumber(bedNumber);
     }
-
 
     public String getPropertyNumber() { return this.propertyNumber; }
     
@@ -35,6 +48,18 @@ public class Bed implements IEntity {
     public void setBedNumber(String bedNumber) {
         this.bedNumber = bedNumber;
     }
+    
+	public boolean isOccupied() {
+		return occupied;
+	}
+
+	public void setOccupied(boolean occupied) {
+		this.occupied = occupied;
+	}
+
+	public Patient getOccupyingPacient() {
+		return occupyingPacient;
+	}
 
 	@Override
 	public int hashCode() {
@@ -57,6 +82,13 @@ public class Bed implements IEntity {
     public String getKey() {
         return getPropertyNumber();
     }
+	
+	public static List<String> summaryValues() {
+		return new GenericOperations<Bed>(Bed.class).list()
+				.stream()
+				.map( bed -> bed.getKey())
+				.collect(Collectors.toList());
+	}
 
 	@Override
 	public String toString() {

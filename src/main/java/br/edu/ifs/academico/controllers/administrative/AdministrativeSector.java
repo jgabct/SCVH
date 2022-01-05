@@ -7,10 +7,10 @@ import java.util.ResourceBundle;
 import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.controllers.DashboardController;
 import br.edu.ifs.academico.model.entities.Sector;
+import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.enums.Frame;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -18,7 +18,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
@@ -27,6 +26,8 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class AdministrativeSector implements Initializable{
+	
+    private GenericOperations<Sector> go = new GenericOperations<>(Sector.class);
 
     private Stage insideStage;
 	
@@ -62,7 +63,7 @@ public class AdministrativeSector implements Initializable{
 			}
 		});
 		
-		ObservableList<Sector> teamMembers = FXCollections.observableArrayList(Main.getDatabase().getTableSector());
+		ObservableList<Sector> teamMembers = FXCollections.observableArrayList(go.list());
 		
 		table.setItems(teamMembers);
 		

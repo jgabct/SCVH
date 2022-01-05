@@ -2,10 +2,12 @@ package br.edu.ifs.academico.utils.components;
 
 import java.util.List;
 
-import br.edu.ifs.academico.controllers.FormController;
+import br.edu.ifs.academico.controllers.DashboardController;
 import br.edu.ifs.academico.controllers.FormControllerTest;
+import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.CustomButton;
 import br.edu.ifs.academico.utils.enums.SystemObjects;
+import br.edu.ifs.academico.model.entities.Patient;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -18,7 +20,7 @@ public class ComponentsReceptionistDashboard extends Component{
 	private final CustomButton registerButton = new CustomButton("Registrar", "idRegisterButton",
 			event -> {
 				System.out.println("registerButton diz: click");			
-				new FormControllerTest(SystemObjects.EMPLOYEE);
+				new FormControllerTest(SystemObjects.PATIENT, new GenericOperations<Patient>(Patient.class), DashboardController.class);
 			}
 		);
 	private final CustomButton validateButton = new CustomButton("Validar", "idValidateButton",

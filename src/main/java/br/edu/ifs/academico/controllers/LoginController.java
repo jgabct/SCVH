@@ -6,6 +6,8 @@ import java.util.ResourceBundle;
 
 import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.model.entities.Employee;
+import br.edu.ifs.academico.model.services.CryptoManager;
+import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.enums.EmployeeType;
 import br.edu.ifs.academico.utils.enums.Frame;
@@ -17,6 +19,8 @@ import javafx.stage.Stage;
 
 public class LoginController implements Initializable {
 
+	private GenericOperations<Employee> go = new GenericOperations<>(Employee.class);
+	
     /*
      * Nota: essa janela tem os botões fixos no fxml
      * pq não sofrerá mudanças
@@ -76,31 +80,52 @@ public class LoginController implements Initializable {
         System.out.println("commitButton diz: click");
 
         String employeeEnrolment = employeeEnrolmentTextField.getText();
+		String employeePassword = employeePasswordTextField.getText();
 
-        if("".equals(employeeEnrolment)) {
-            System.out.println(employeeEnrolment);
-            return;
-        }
-      
-        try {
-//            Employee emp = Main.getDatabase().getTableEmployee().entrySet().stream().filter( i -> i.getKey().equals(employeeEnrolment)).findFirst().get().getValue();
-//            
-//            Main.setEmployee(emp);
-//            
-//            System.out.println(emp.toString());
-            Employee em = new Employee();
-        	em.setPost(EmployeeType.ADMINISTRATOR);
-        	Main.setEmployee(em);
-        	
-            new DashboardController();
-            
-        } catch (Exception e) {
-        	System.err.println(e);
-            return;
-        }
+		if ("".equals(employeeEnrolment) || "".equals(employeePassword)) {
+			System.out.println(employeeEnrolment);
+			return;
 
+		} else {
 
-    }
+			Employee employee = go.select(employeeEnrolment);
+
+			if (CryptoManager.descryptPswd(employeePassword, employee.getPassword())) {
+
+				Main.setEmployee(employee);
+
+				try {
+					switch (employee.getPost()) {
+					case RECEPTIONIST -> {
+						System.out.println(EmployeeType.RECEPTIONIST);
+						Main.getEmployee().setPost(EmployeeType.RECEPTIONIST);
+					}
+					case ADMINISTRATOR -> {
+						System.out.println(EmployeeType.ADMINISTRATOR);
+						Main.getEmployee().setPost(EmployeeType.ADMINISTRATOR);
+					}
+					case NURSE -> {
+						System.out.println(EmployeeType.NURSE);
+						Main.getEmployee().setPost(EmployeeType.NURSE);
+					}
+					default -> throw new IllegalArgumentException("Unexpected value: " + employeeEnrolment);
+					}
+
+					new DashboardController();
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			} else {
+
+				return;
+
+			}
+
+		}
+
+	}
 
     //Término dos eventos dos botões
     

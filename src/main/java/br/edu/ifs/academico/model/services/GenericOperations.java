@@ -1,96 +1,117 @@
 package br.edu.ifs.academico.model.services;
 
-import br.edu.ifs.academico.model.interfaces.IEntity;
-
 import java.util.List;
 
-// Essa classe está encarregada de fazer as operações que pertecem a todas as entidades
+import javax.persistence.EntityManager;
+
+import br.edu.ifs.academico.model.interfaces.IEntity;
+
+// Essa classe est� encarregada de fazer as opera��es que pertecem a todas as entidades
 public class GenericOperations<E extends IEntity> {
 // O tipo "E" obrigatoriamente deve implementar a interface Ientity (Ou seja deve ser uma entidade)
 
-    // O atributo operationEntity armazena o tipo de entidade que está sendo
-    // processada
-    private final Class<E> operationEntity;
-//    private EntityManager em;
+	// O atributo operationEntity armazena o tipo de entidade que est� sendo
+	// processada
+	
+	
+	
+	private Class<E> operationEntity;
+	private EntityManager em;
 
-    public Class<E> getOperationEntity() {
-        return operationEntity;
-    }
+	public Class<E> getOperationEntity() {
+		return operationEntity;
+	}
 
-    public GenericOperations(Class<E> operationEntity /*EntityManager em*/) {
-        this.operationEntity = operationEntity;
-//        this.em = em;
-    }
+	public GenericOperations(Class<E> operationEntity) {
+		this.operationEntity = operationEntity;
+		this.em = EMFactory.createEntityManager();
 
-    public void register(E entity) {
-//
-//        em.getTransaction().begin();
-//
-//        em.persist(entity);
-//
-//        em.getTransaction().commit();
+		
+	}
 
-    }
+	public void register(E entity) {
 
-    // OBS: O metodo retorna "E" que por natureza é o mesmo tipo do "E" da instancia
-    // da classe
-    // EX: Se GenericOperations<Visitor> então select(pk) retorna um Visitor
-    public E select(Object pk) {
+		em.getTransaction().begin();
 
-        // pk é do tipo Object por causa que dessa maneira ela aceita qualquer objeto
-        // que seja filho de Object
-        // EX: String, Integer, Character etc.
+		em.persist(entity);
 
-//        return em.find(operationEntity, pk);
-        return null;
-    }
+		em.getTransaction().commit();
 
-    public void delete(Object pk) {
+	}
+	
+	public void register(Object entity) {
 
-//        em.getTransaction().begin();
-//
-//        em.remove(select(pk));
-//
-//        em.getTransaction().commit();
+		em.getTransaction().begin();
 
-    }
+		em.persist(entity);
 
-    public void update(E alteredEntity,E args) {
+		em.getTransaction().commit();
 
-        if(alteredEntity.getKey().equals(args.getKey())) {
-//
-//            em.getTransaction().begin();
-//
-//            em.merge(args);
-//
-//            em.getTransaction().getClass();
+	}
 
-        } else {
+	// OBS: O metodo retorna "E" que por natureza � o mesmo tipo do "E" da instancia
+	// da classe
+	// EX: Se GenericOperations<Visitor> ent�o select(pk) retorna um Visitor
+	public E select(Object pk) {
 
+		// pk � do tipo Object por causa que dessa maneira ela aceita qualquer objeto
+		// que seja filho de Object
+		// EX: String, Integer, Character etc.
 
+		return em.find(operationEntity, pk);
 
-            register(args);
+	}
 
-            delete(alteredEntity.getKey());
+	public void delete(Object pk) {
 
+		em.getTransaction().begin();
 
-        }
+		em.remove(select(pk));
 
+		em.getTransaction().commit();
 
-    }
+	}
 
-    public boolean exists(Object pk) {
-//
-//        return (select(pk) == null) ? false : true;
-        return true;
-    }
+	// OBS: O metodo update verifica se a Primary Key foi alterada, caso ela foi
+	// alterada ele cria uma nova entidade e deleta a antiga
+	public void update(E alteredEntity, E args) {
 
-    public List<E> list() {
+		if (alteredEntity.getKey().equals(args.getKey())) {
 
-        String jpql = "SELECT e FROM " + operationEntity.getSimpleName() + " e";
-//
-//        return em.createQuery(jpql, operationEntity).getResultList();
-        return null;
-    }
+			em.getTransaction().begin();
+
+			em.merge(args);
+
+			em.getTransaction().commit();
+
+		} else {
+
+			register(args);
+
+			delete(alteredEntity.getKey());
+
+		}
+
+	}
+
+	public boolean exists(Object pk) {
+
+		return (select(pk) == null) ? false : true;
+
+	}
+
+	public List<E> list() {
+
+		String jpql = "SELECT e FROM " + operationEntity.getSimpleName() + " e";
+
+		return em.createQuery(jpql, operationEntity).getResultList();
+
+	}
+
+	public void endOperations() {
+
+		EMFactory.closeEntityManager(this.em);
+
+	}
 
 }

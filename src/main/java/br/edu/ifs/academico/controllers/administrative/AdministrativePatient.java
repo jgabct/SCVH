@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.controllers.DashboardController;
 import br.edu.ifs.academico.model.entities.Patient;
+import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.enums.Frame;
 import javafx.beans.property.SimpleStringProperty;
@@ -25,6 +26,8 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class AdministrativePatient implements Initializable{
+	
+    private GenericOperations<Patient> go = new GenericOperations<>(Patient.class);
 
     private Stage insideStage;
 	
@@ -49,12 +52,20 @@ public class AdministrativePatient implements Initializable{
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 
-		colLinkCode.setCellValueFactory(cellData -> new SimpleStringProperty(((Patient) cellData.getValue()).getLinkCode()));
-		colName.setCellValueFactory(cellData -> new SimpleStringProperty(((Patient) cellData.getValue()).getName()));
-		colBirthDate.setCellValueFactory(cellData -> new SimpleStringProperty(((Patient) cellData.getValue()).getBirthDate()));
-		colPropertyNumber.setCellValueFactory(cellData -> new SimpleStringProperty(((Patient) cellData.getValue()).getPropertyNumber()));
+		colLinkCode.setCellValueFactory(
+				cellData -> new SimpleStringProperty(((Patient) cellData.getValue()).getLinkCode())
+			);
+		colName.setCellValueFactory(
+				cellData -> new SimpleStringProperty(((Patient) cellData.getValue()).getName())
+			);
+		colBirthDate.setCellValueFactory(
+				cellData -> new SimpleStringProperty(((Patient) cellData.getValue()).getBirthDate().toString())
+			);
+		colPropertyNumber.setCellValueFactory(
+				cellData -> new SimpleStringProperty(((Patient) cellData.getValue()).getOccupiedBed().getKey())
+			);
 		
-		ObservableList<Patient> teamMembers = FXCollections.observableArrayList(Main.getDatabase().getTablePatient());
+		ObservableList<Patient> teamMembers = FXCollections.observableArrayList(go.list());
 		
 		table.setItems(teamMembers);
 		

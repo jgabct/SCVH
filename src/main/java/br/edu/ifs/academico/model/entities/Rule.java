@@ -1,145 +1,80 @@
 package br.edu.ifs.academico.model.entities;
 
-import br.edu.ifs.academico.model.interfaces.IEntity;
-
-import java.time.LocalTime;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+import br.edu.ifs.academico.model.interfaces.IEntity;
+import br.edu.ifs.academico.utils.annotations.Blocked;
+
+@Entity
 public class Rule implements IEntity {
 
-    private String ruleCode;
-    private LocalTime morningEntryHour;
-    private LocalTime morningExitHour;
-    private LocalTime afternoonEntryHour;
-    private LocalTime afternoonExitHour;
-    private LocalTime nightEntryHour;
-    private LocalTime nightExitHour;
-    private Integer maximumVisitorsPerPatient;
-    private Integer maximumVisitorsPerRoom;
-    // O visitDuration armazena a duraÃ§Ã£o da visita em minutos
-    private Integer visitDuration;
+	@Id
+	@Blocked
+	private String ruleCode;
+
+	// Os atributos são dividos por ","
+	// Os atributos dos args são indicados por "="
+	// Os atributos dos args são divididos por "-"
+	// Os conjuntos de args são divido pelas posições no List
+	// Ex List.get(0) -> arg1=atr1-atr2 || List.get(1) -> arg1=atr1
+
+	// A List turnArgs armazena os periodos aptos a visita
+	// Suas informações são armazenadas puras: xx:xx - xx:xx
+
+	@ElementCollection
+	List<String> turnArgs;
+
+	@ElementCollection
+	List<String> capacityArgs;
+	// A List capacityArgs armazena as regras dos periodos
+	// Ou seja os args da posição 0 são equivalentes ao turnArgs na posição 0
 
     public Rule() {/*Construtor vazio*/}
 
-    // Construtor com atributos minimos para um regra com limite de duraÃ§Ã£o
-    public Rule(String ruleCode, Integer maximumVisitorsPerPatient, Integer maximumVisitorsPerRoom, Integer visitDuration) {
-        setRuleCode(ruleCode);
-        setMaximumVisitorsPerPatient(maximumVisitorsPerPatient);
-        setmaximumVisitorsPerRoom(maximumVisitorsPerRoom);
-        setVisitDuration(visitDuration);
-    }
+	public Rule(List<String> turnArgs, List<String> capacityArgs) {
+		setTurnArgs(turnArgs);
+		setCapacityArgs(capacityArgs);
+	}
 
-    // Construtor com atributos minimos para um regra com limite de horario
-    public Rule(String ruleCode, LocalTime morningEntryHour, LocalTime nightExitHour, Integer maximumVisitorsPerPatient, Integer maximumVisitorsPerRoom,
-                Integer visitDuration) {
-        setRuleCode(ruleCode);
-        setMorningEntryHour(morningEntryHour);
-        setNightExitHour(nightExitHour);
-        setMaximumVisitorsPerPatient(maximumVisitorsPerPatient);
-        setmaximumVisitorsPerRoom(maximumVisitorsPerRoom);
-        setVisitDuration(visitDuration);
-    }
+	public Rule(String ruleCode, List<String> turnArgs, List<String> capacityArgs) {
+		this(turnArgs,capacityArgs);
+		setRuleCode(ruleCode);
+	}
 
-    // Construtor completo
-    public Rule(String ruleCode, LocalTime morningEntryHour, LocalTime morningExitHour, LocalTime afternoongEntryHour,
-                LocalTime afternoonExitHour, LocalTime nightEntryHour, LocalTime nightExitHour, Integer maximumVisitorsPerPatient,
-                Integer maximumVisitorsPerRoom, Integer visitDuration) {
-        setRuleCode(ruleCode);
-        setMorningEntryHour(morningEntryHour);
-        setMorningExitHour(morningExitHour);
-        setAfternoonEntryHour(afternoongEntryHour);
-        setAfternoonExitHour(afternoonExitHour);
-        setNightEntryHour(nightEntryHour);
-        setNightExitHour(nightExitHour);
-        setMaximumVisitorsPerPatient(maximumVisitorsPerPatient);
-        setmaximumVisitorsPerRoom(maximumVisitorsPerRoom);
-        setVisitDuration(visitDuration);
-    }
+	public String getRuleCode() {
+		return ruleCode;
+	}
 
-    public String getRuleCode() {
-        return this.ruleCode;
-    }
+	public void setRuleCode(String ruleCode) {
+		this.ruleCode = ruleCode;
+	}
 
-    public void setRuleCode(String ruleCode) {
-        this.ruleCode = ruleCode;
-    }
+	public List<String> getTurnArgs() {
+		return turnArgs;
+	}
 
-    public LocalTime getMorningEntryHour() {
-        return this.morningEntryHour;
-    }
+	public void setTurnArgs(List<String> turnArgs) {
+		this.turnArgs = turnArgs;
+	}
 
-    public void setMorningEntryHour(LocalTime morningEntryHour) {
-        this.morningEntryHour = morningEntryHour;
-    }
+	public List<String> getCapacityArgs() {
+		return capacityArgs;
+	}
 
-    public LocalTime getMorningExitHour() {
-        return this.morningExitHour;
-    }
+	public void setCapacityArgs(List<String> capacityArgs) {
+		this.capacityArgs = capacityArgs;
+	}
 
-    public void setMorningExitHour(LocalTime morningExitHour) {
-        this.morningExitHour = morningExitHour;
-    }
-
-    public LocalTime getAfternoonEntryHour() {
-        return this.afternoonEntryHour;
-    }
-
-    public void setAfternoonEntryHour(LocalTime afternoonEntryHour) {
-        this.afternoonEntryHour = afternoonEntryHour;
-    }
-
-    public LocalTime getAfternoonExitHour() {
-        return this.afternoonExitHour;
-    }
-
-    public void setAfternoonExitHour(LocalTime afternoonExitHour) {
-        this.afternoonExitHour = afternoonExitHour;
-    }
-
-    public LocalTime getNightEntryHour() {
-        return this.nightEntryHour;
-    }
-
-    public void setNightEntryHour(LocalTime nightEntryHour) {
-        this.nightEntryHour = nightEntryHour;
-    }
-
-    public LocalTime getNightExitHour() {
-        return this.nightExitHour;
-    }
-
-    public void setNightExitHour(LocalTime nightExitHour) {
-        this.nightExitHour = nightExitHour;
-    }
-
-    public Integer getMaximumVisitorsPerPatient() {
-        return this.maximumVisitorsPerPatient;
-    }
-
-    public void setMaximumVisitorsPerPatient(Integer maximumVisitorsPerPatient) {
-        this.maximumVisitorsPerPatient = maximumVisitorsPerPatient;
-    }
-
-    public Integer getmaximumVisitorsPerRoom() {
-        return this.maximumVisitorsPerRoom;
-    }
-
-    public void setmaximumVisitorsPerRoom(Integer maximumVisitorsPerRoom) {
-        this.maximumVisitorsPerRoom = maximumVisitorsPerRoom;
-    }
-
-    public Integer getVisitDuration() {
-        return this.visitDuration;
-    }
-
-    public void setVisitDuration(Integer visitDuration) {
-        this.visitDuration = visitDuration;
-    }
-
-    @Override
+	
+	
+	@Override
 	public int hashCode() {
-		return Objects.hash(afternoonEntryHour, afternoonExitHour, maximumVisitorsPerPatient, maximumVisitorsPerRoom,
-				morningEntryHour, morningExitHour, nightEntryHour, nightExitHour, ruleCode, visitDuration);
+		return Objects.hash(ruleCode);
 	}
 
 	@Override
@@ -151,15 +86,7 @@ public class Rule implements IEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		Rule other = (Rule) obj;
-		return Objects.equals(afternoonEntryHour, other.afternoonEntryHour)
-				&& Objects.equals(afternoonExitHour, other.afternoonExitHour)
-				&& Objects.equals(maximumVisitorsPerPatient, other.maximumVisitorsPerPatient)
-				&& Objects.equals(maximumVisitorsPerRoom, other.maximumVisitorsPerRoom)
-				&& Objects.equals(morningEntryHour, other.morningEntryHour)
-				&& Objects.equals(morningExitHour, other.morningExitHour)
-				&& Objects.equals(nightEntryHour, other.nightEntryHour)
-				&& Objects.equals(nightExitHour, other.nightExitHour) && Objects.equals(ruleCode, other.ruleCode)
-				&& Objects.equals(visitDuration, other.visitDuration);
+		return Objects.equals(ruleCode, other.ruleCode);
 	}
 
 	@Override
@@ -169,11 +96,7 @@ public class Rule implements IEntity {
 
 	@Override
 	public String toString() {
-		return "Rule [ruleCode=" + ruleCode + ", morningEntryHour=" + morningEntryHour + ", morningExitHour="
-				+ morningExitHour + ", afternoonEntryHour=" + afternoonEntryHour + ", afternoonExitHour="
-				+ afternoonExitHour + ", nightEntryHour=" + nightEntryHour + ", nightExitHour=" + nightExitHour
-				+ ", maximumVisitorsPerPatient=" + maximumVisitorsPerPatient + ", maximumVisitorsPerRoom="
-				+ maximumVisitorsPerRoom + ", visitDuration=" + visitDuration + "]";
+		return "Rule [ruleCode=" + ruleCode + ", turnArgs=" + turnArgs + ", capacityArgs=" + capacityArgs + "]";
 	}
-
+	
 }

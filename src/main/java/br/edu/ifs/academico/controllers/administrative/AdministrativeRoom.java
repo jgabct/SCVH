@@ -6,9 +6,8 @@ import java.util.ResourceBundle;
 
 import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.controllers.DashboardController;
-import br.edu.ifs.academico.model.entities.Patient;
 import br.edu.ifs.academico.model.entities.Room;
-import br.edu.ifs.academico.model.entities.Sector;
+import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.enums.Frame;
 import javafx.beans.property.SimpleStringProperty;
@@ -27,6 +26,8 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 public class AdministrativeRoom implements Initializable{
+	
+    private GenericOperations<Room> go = new GenericOperations<>(Room.class);
 
     private Stage insideStage;
 	
@@ -51,17 +52,23 @@ public class AdministrativeRoom implements Initializable{
 	public void initialize(URL arg0, ResourceBundle arg1) {
 
 
-		colRoomCode.setCellValueFactory(cellData -> new SimpleStringProperty(((Room) cellData.getValue()).getRoomCode()));
-		colRule.setCellValueFactory(cellData -> {
-			try {
-				return new SimpleStringProperty(((Room) cellData.getValue()).getRule().getKey());
-			} catch (Exception e) {
-				return new SimpleStringProperty("Sem Regra");
-			}
-		});
-		colSector.setCellValueFactory(cellData -> new SimpleStringProperty(((Room) cellData.getValue()).getSector().getKey()));
+		colRoomCode.setCellValueFactory(
+				cellData -> new SimpleStringProperty(((Room) cellData.getValue()).getRoomCode())
+			);
+		colRule.setCellValueFactory(
+				cellData -> {
+					try {
+						return new SimpleStringProperty(((Room) cellData.getValue()).getRule().getKey());
+					} catch (Exception e) {
+						return new SimpleStringProperty("Sem Regra");
+					}
+				}
+			);
+		colSector.setCellValueFactory(
+				cellData -> new SimpleStringProperty(((Room) cellData.getValue()).getBelongingSector().getKey())
+			);
 		
-		ObservableList<Room> teamMembers = FXCollections.observableArrayList(Main.getDatabase().getTableRoom());
+		ObservableList<Room> teamMembers = FXCollections.observableArrayList(go.list());
 		
 		table.setItems(teamMembers);
 		

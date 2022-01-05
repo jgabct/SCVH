@@ -2,42 +2,69 @@ package br.edu.ifs.academico.model.entities;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import br.edu.ifs.academico.model.interfaces.IEntity;
+import br.edu.ifs.academico.model.services.GenericOperations;
+import br.edu.ifs.academico.utils.annotations.Blocked;
+import br.edu.ifs.academico.utils.annotations.ItIsABox;
 import br.edu.ifs.academico.utils.annotations.NameField;
 
+@Entity
 public class Room implements IEntity {
 
+	@Id
+	@Blocked
 	@NameField(value = "Código")
-    private String roomCode;
-	
+	private String roomCode;
+
 	@NameField(value = "Regra")
-    private Rule rule;
-    
-	@NameField(value = "Setor")
-	private Sector sector;
+	@ManyToOne
+	@JoinColumn(name = "rule", referencedColumnName = "ruleCode")
+	@ItIsABox
+	private Rule rule;
+
+	@OneToMany
+	@JoinColumn(name = "room", referencedColumnName = "roomCode")
+	private Set<Bed> beds;
+
+	//OBS: O campo currentVisits não é armazenado no banco 
+	@Transient
+	private Set<Visit> currentVisits;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@ItIsABox
+	private Sector belongingSector;
 	
-	private List<Bed> listBeds;
 
     public Room() {/*Construtor vazio*/}
 
-    public Room(String roomCode, Sector sectorCode) {
+    public Room(String roomCode, Sector belongingSector) {
         setRoomCode(roomCode);
-        setSector(sectorCode);
+        setBelongingSector(belongingSector);
     }
 
-    public Room(String roomCode, Rule ruleCode, Sector sectorCode) {
-        this(roomCode, sectorCode);
-        setRule(ruleCode);
+    public Room(String roomCode, Rule rule, Sector belongingSector) {
+        this(roomCode, belongingSector);
+        setRule(rule);
     }
     
-    public Room(String roomCode, Sector sectorCode, List<Bed> listBeds) {
+    public Room(String roomCode, Sector sectorCode, Set<Bed> listBeds) {
     	this(roomCode, sectorCode);
-    	setListBeds(listBeds);
+    	setBeds(listBeds);
     }
-    public Room(String roomCode, Rule ruleCode, Sector sectorCode, List<Bed> listBeds) {
+    public Room(String roomCode, Rule ruleCode, Sector sectorCode, Set<Bed> listBeds) {
     	this(roomCode, ruleCode, sectorCode);
-    	setListBeds(listBeds);
+    	setBeds(listBeds);
     }
 
     public String getRoomCode() {
@@ -56,20 +83,20 @@ public class Room implements IEntity {
         this.rule = rule;
     }
 
-    public Sector getSector() {
-		return this.sector;
+    public Sector getBelongingSector() {
+		return this.belongingSector;
 	}
 
-	public void setSector(Sector sector) {
-		this.sector = sector;
+	public void setBelongingSector(Sector belongingSector) {
+		this.belongingSector = belongingSector;
 	}
 
-	public List<Bed> getListBeds() {
-		return listBeds;
+	public Set<Bed> getBeds() {
+		return this.beds;
 	}
 
-	public void setListBeds(List<Bed> listBeds) {
-		this.listBeds = listBeds;
+	public void setBeds(Set<Bed> beds) {
+		this.beds = beds;
 	}
 
 	@Override
@@ -93,11 +120,28 @@ public class Room implements IEntity {
     public String getKey() {
         return getRoomCode();
     }
+	
+	public void addVisit(Visit visit) {
+		this.currentVisits.add(visit);
+	}
+	
+	public static List<String> summaryValues() {
+		return new GenericOperations<Room>(Room.class).list()
+				.stream()
+				.map( room -> room.getKey())
+				.collect(Collectors.toList());
+	}
+	
+//	private void findVisits() {
+//		
+//	}
 
 	@Override
 	public String toString() {
-		return "Room [roomCode=" + roomCode + ", rule=" + rule + ", sector=" + sector + "]";
+		return "Room [roomCode=" + roomCode + ", rule=" + rule + ", beds=" + beds + ", currentVisits=" + currentVisits
+				+ ", belongingSector=" + belongingSector + "]";
 	}
+
 
 
 

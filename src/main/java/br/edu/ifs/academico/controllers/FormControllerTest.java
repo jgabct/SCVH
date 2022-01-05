@@ -11,10 +11,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.management.modelmbean.InvalidTargetObjectTypeException;
+
+import org.jboss.jandex.ClassExtendsTypeTarget;
+
 import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.model.entities.Sector;
+import br.edu.ifs.academico.model.interfaces.IEntity;
+import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.LoadScene;
-import br.edu.ifs.academico.utils.annotations.Bloq;
+import br.edu.ifs.academico.utils.annotations.Blocked;
 import br.edu.ifs.academico.utils.annotations.FriendlyName;
 import br.edu.ifs.academico.utils.annotations.NameField;
 import br.edu.ifs.academico.utils.enums.Frame;
@@ -30,12 +36,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class FormControllerTest <T> implements Initializable {
+public class FormControllerTest implements Initializable {
 	
     private Stage insideStage;
     private SystemObjects targetObject;
     
-    private T object;
+    private Class<?> clazzEscape;
+    
+    private GenericOperations<? extends IEntity> gen;
     
     private LinkedList<InputLine> listInputText;
 
@@ -44,14 +52,10 @@ public class FormControllerTest <T> implements Initializable {
     @FXML private Button cancelButton;
     @FXML private Button finishButton;
     
-    public FormControllerTest(SystemObjects targetObject) {
-    	this.targetObject = targetObject;
-    	toAssemble();
-    }
-    
-	public FormControllerTest(T obj ,SystemObjects targetObject) {
-    	this.object = obj;
-    	this.targetObject = targetObject;
+	public FormControllerTest(SystemObjects targetObject, GenericOperations<? extends IEntity> gen,  Class<?> clazzEscape) {
+		this.targetObject = targetObject;
+		this.gen = gen;
+		this.clazzEscape = clazzEscape;
     	toAssemble();
     }
 
@@ -87,20 +91,10 @@ public class FormControllerTest <T> implements Initializable {
         
         finishButton.setOnAction(event -> {
         	System.out.println("finishButton diz: click");
-//        	System.out.println(getObject(targetObject.getSystemObjectsType(), comp).toString());
+        	buildEntity();
         	exit();
         });
-       
-        try {
-			setItemList(object);
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			System.err.println("Deu ruim 1");
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			System.err.println("Deu ruim 2");
-		}
-        
+
     }
     
     private void toAssemble() {
@@ -121,7 +115,16 @@ public class FormControllerTest <T> implements Initializable {
     }
 
 	
-    private void exit() { new DashboardController(); }
+    private void exit() { 
+    	try {
+			clazzEscape.getConstructor(new Class[]{}).newInstance();
+			
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
     
 //    public static <T> LinkedHashMap<FriendlyName, InputLine> getListFieldCreation(Class<T> typeClass) {
 //		return (Arrays.asList(typeClass.getDeclaredFields()).stream()
@@ -145,7 +148,7 @@ public class FormControllerTest <T> implements Initializable {
 //				);	
 //	}
 	
-    public static LinkedList<InputLine> getListFieldCreation(Class<?> typeClass) {
+    private static LinkedList<InputLine> getListFieldCreation(Class<?> typeClass) {
     	return List.of(typeClass.getDeclaredFields())
     		.stream()
     		.filter(trinket -> trinket.isAnnotationPresent(NameField.class))
@@ -154,94 +157,105 @@ public class FormControllerTest <T> implements Initializable {
     				List::addAll);
     }
     
-	public static <T> Object getObject(Class<T> clz, LinkedHashMap<FriendlyName, InputLine> list) {
-		Object obj = null;
+    
+    public void buildEntity() {
+    	
+    	Class<?> clazz = targetObject.getSystemObjectsType();
+    	
+    	Object obj = null;
+    	
 		try {
-			obj = clz.getDeclaredConstructor().newInstance();
+			obj = clazz.getDeclaredConstructor(new Class[]{}).newInstance();
 			
-			for (Map.Entry<FriendlyName, InputLine> entry : list.entrySet()) {
-				FriendlyName annot = entry.getKey();
-				Method method = obj.getClass().getDeclaredMethod(annot.methodToSave(), annot.nameClassInput());
-				switch (entry.getKey().fieldType()){
-					case TEXTFIELD: 
-						method.invoke(obj, entry.getValue().getInputLineText());
-						break;
-					case COMBOBOX:
-						method.invoke(obj, entry.getValue().getInputLineTextComboBox());
-					break;
-    			}
-			}
+			for(InputLine input : listInputText) {
 				
-		} catch (IllegalArgumentException | InvocationTargetException | NoSuchMethodException | 
-				InstantiationException | IllegalAccessException | SecurityException e) {
+				Field field = clazz.getDeclaredField(input.getField().getName());
+				
+				field.setAccessible(true);
+				
+				field.set(obj, input.getInputLineText());	
+				
+			}
+			
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException | NoSuchFieldException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return obj;
+    	
+		gen.register(clazz.cast(obj));
 
-	}
+    }
+//    
+//    public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
+//        try {
+//            return clazz.cast(o);
+//        } catch(ClassCastException e) {
+//            return null;
+//        }
+//    }
+    
+//	public static <T> Object getObject(Class<T> clz, LinkedHashMap<FriendlyName, InputLine> list) {
+//		Object obj = null;
+//		try {
+//			obj = clz.getDeclaredConstructor().newInstance();
+//			
+//			for (Map.Entry<FriendlyName, InputLine> entry : list.entrySet()) {
+//				FriendlyName annot = entry.getKey();
+//				Method method = obj.getClass().getDeclaredMethod(annot.methodToSave(), annot.nameClassInput());
+//				switch (entry.getKey().fieldType()){
+//					case TEXTFIELD: 
+//						method.invoke(obj, entry.getValue().getInputLineText());
+//						break;
+//					case COMBOBOX:
+//						method.invoke(obj, entry.getValue().getInputLineTextComboBox());
+//					break;
+//    			}
+//			}
+//				
+//		} catch (IllegalArgumentException | InvocationTargetException | NoSuchMethodException | 
+//				InstantiationException | IllegalAccessException | SecurityException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return obj;
+//
+//	}
 	
-	public void setItemList(T obj) throws IllegalArgumentException, IllegalAccessException {
-		System.out.println(obj.toString());
-		
-		if(obj != null) {
-			Class<?> clazz = obj.getClass();
-			for(Field field : clazz.getDeclaredFields()) {
-				field.setAccessible(true);
-				for(InputLine iL : listInputText) {
-					if(field.equals(iL.getFieldF())) {
-						if(field.get(obj) instanceof Sector) {
-							iL.setTextInputLine(((Sector) field.get(obj)).getKey());
-							continue;
-						}
-						iL.setTextInputLine((String) field.get(obj));
-					}
-				}
-			}
-		}
-	}
+//	public void setItemList() throws IllegalArgumentException, IllegalAccessException {
+//		System.out.println(obj.toString());
+//		
+//		if(obj != null) {
+//			Class<?> clazz = obj.getClass();
+//			for(Field field : clazz.getDeclaredFields()) {
+//				field.setAccessible(true);
+//				for(InputLine iL : listInputText) {
+//					if(field.equals(iL.getFieldF())) {
+//						if(field.get(obj) instanceof Sector) {
+//							iL.setTextInputLine(((Sector) field.get(obj)).getKey());
+//							continue;
+//						}
+//						iL.setTextInputLine((String) field.get(obj));
+//					}
+//				}
+//			}
+//		}
+//	}
     
      public static class InputLine extends HBox{
-    	 	private Field fieldF;
-    	 	private TextField field;
+    	 	private Field field;
+    	 	private TextField textField;
     		private ComboBox<Object> fieldBox;
-    		
-    		public InputLine(NameField annot) {
-    			setPrefSize(600, 40);
-    			setSpacing(10);
-    			setAlignment(Pos.CENTER);
-    			
-    			setTitle(annot.value());
-    			setField();
-    		}    		
     		
     		public InputLine(Field field) {
     			setPrefSize(600, 40);
     			setSpacing(10);
     			setAlignment(Pos.CENTER);
     			
-    			this.fieldF = field;
+    			this.field = field;
     			
     			setTitle(field.getAnnotation(NameField.class).value());
     			setField();
-    		}
-    		
-    		public InputLine(FriendlyName annot){
-    			setPrefSize(600, 40);
-    			setSpacing(10);
-    			setAlignment(Pos.CENTER);
-    			
-    			setTitle(annot.value());
-    			
-    			switch (annot.fieldType()){
-					case TEXTFIELD: 
-						setField();
-						break;
-					case COMBOBOX:
-						setComboBox();
-					break;
-    			}
-
     		}
     		
     		private void setTitle(String title) {
@@ -252,10 +266,10 @@ public class FormControllerTest <T> implements Initializable {
     		}
     		
     		private void setField() {
-    			field = new TextField();
-    			field.setPrefSize(220, 30);
-    			field.setAlignment(Pos.CENTER_LEFT);
-    			getChildren().add(field);
+    			textField = new TextField();
+    			textField.setPrefSize(220, 30);
+    			textField.setAlignment(Pos.CENTER_LEFT);
+    			getChildren().add(textField);
     		}
     		
     		private void setComboBox() {
@@ -270,14 +284,14 @@ public class FormControllerTest <T> implements Initializable {
     		}
     		
     		public void setTextInputLine(String text){
-    			field.setText(text);
-    			if(fieldF.isAnnotationPresent(Bloq.class)) {
-    				field.setEditable(false);
+    			textField.setText(text);
+    			if(field.isAnnotationPresent(Blocked.class)) {
+    				textField.setEditable(false);
     			}
     		}
     		
     		public String getInputLineText() {
-    			return field.getText();
+    			return textField.getText();
     		}
     		
     		public String getInputLineTextComboBox (){
@@ -286,12 +300,12 @@ public class FormControllerTest <T> implements Initializable {
     			return resp;
     		}
 
-			public Field getFieldF() {
-				return fieldF;
+			public Field getField() {
+				return field;
 			}
 
-			public void setFieldF(Field fieldF) {
-				this.fieldF = fieldF;
+			public void setField(Field field) {
+				this.field = field;
 			}
     		
      }
