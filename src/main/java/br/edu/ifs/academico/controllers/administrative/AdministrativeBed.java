@@ -53,6 +53,8 @@ public class AdministrativeBed implements Initializable{
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		
+		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
 		colPropertyNumber.setCellValueFactory(
 				cellData -> new SimpleStringProperty(((Bed) cellData.getValue()).getPropertyNumber())
@@ -93,10 +95,7 @@ public class AdministrativeBed implements Initializable{
 		
 		  addButton.setOnAction(event -> {
 	        	System.out.println("addButton diz: click");
-	        	
 	        	new FormControllerTest(SystemObjects.BED, go, this.getClass());
-	        	
-	        	
 	        });
 	        
 	        editButton.setOnAction(event -> {
@@ -112,6 +111,14 @@ public class AdministrativeBed implements Initializable{
 	        
 	        removeButton.setOnAction(event -> {
 	        	System.out.println("removeButton diz: click");
+	        	try {
+		        	if(!table.getSelectionModel().selectedItemProperty().get().equals(null)) {
+			        	go.delete(table.getSelectionModel().selectedItemProperty().get().getKey());
+		        	}
+				} catch (Exception e) {
+					return;
+				}
+	        	
 	        });
 	        
 	        exitButton.setOnAction(event -> {

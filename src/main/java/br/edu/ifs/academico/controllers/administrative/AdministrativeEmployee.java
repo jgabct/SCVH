@@ -6,10 +6,12 @@ import java.util.ResourceBundle;
 
 import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.controllers.DashboardController;
+import br.edu.ifs.academico.controllers.FormControllerTest;
 import br.edu.ifs.academico.model.entities.Employee;
 import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.enums.Frame;
+import br.edu.ifs.academico.utils.enums.SystemObjects;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -36,7 +38,6 @@ public class AdministrativeEmployee implements Initializable{
 	@FXML private TableColumn<Employee, String> colRegistration;
 	@FXML private TableColumn<Employee, String> colName;
 	@FXML private TableColumn<Employee, String> colCpf;
-	@FXML private TableColumn<Employee, String> colPhone;
 	@FXML private TableColumn<Employee, String> colPost;
 	@FXML private TableColumn<Employee, String> colSector;
 
@@ -63,11 +64,8 @@ public class AdministrativeEmployee implements Initializable{
 		colCpf.setCellValueFactory(
 				cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getCpf())
 			);
-		colPhone.setCellValueFactory(
-				cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getPhone())
-			);
 		colPost.setCellValueFactory(
-				cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getPost().getOffice())
+				cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getPost().get())
 			);
 		colSector.setCellValueFactory(
 				cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getSector().getKey())
@@ -99,6 +97,7 @@ public class AdministrativeEmployee implements Initializable{
 		
 		  addButton.setOnAction(event -> {
 	        	System.out.println("addButton diz: click");
+	        	new FormControllerTest(SystemObjects.EMPLOYEE, go, this.getClass());
 	        });
 	        
 	        editButton.setOnAction(event -> {

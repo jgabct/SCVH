@@ -17,12 +17,14 @@ import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.annotations.Blocked;
 import br.edu.ifs.academico.utils.annotations.ItIsABox;
 import br.edu.ifs.academico.utils.annotations.NameField;
+import br.edu.ifs.academico.utils.enums.KeyField;
 
 @Entity()
 public class Sector implements IEntity {
 
 	@Id
 	@Blocked
+	@KeyField
 	@NameField(value = "Código")
 	private String sectorCode;
 	
@@ -32,7 +34,7 @@ public class Sector implements IEntity {
 	@NameField(value = "Nome")
 	private String sectorName;
 	
-	@NameField(value = "Regra")
+//	@NameField(value = "Regra")
 	@ManyToOne
 	@JoinColumn(name = "rule", referencedColumnName = "ruleCode")
 	@ItIsABox
@@ -44,12 +46,11 @@ public class Sector implements IEntity {
 
     public Sector() {/*Construtor vazio*/}
     
-    public Sector(String sectorCode, String acronym, String sectorName, Rule rule, Set<Room> rooms) {
+    public Sector(String sectorCode, String acronym, String sectorName, Rule rule) {
         setSectorCode(sectorCode);
         setAcronym(acronym);
         setSectorName(sectorName);
         setRuleCode(rule);
-        setRooms(rooms);
     }
 
     public String getSectorCode() { return this.sectorCode; }
@@ -77,10 +78,6 @@ public class Sector implements IEntity {
     }
     
 	public Set<Room> getRooms() { return this.rooms; }
-    
-	public void setRooms(Set<Room> rooms) {
-		this.rooms = rooms;
-	}
 
 	@Override
 	public int hashCode() {
@@ -104,7 +101,17 @@ public class Sector implements IEntity {
         return getSectorCode();
     }
 	
-	public static List<String> summaryValues() {
+	@Override
+    public void setKey(String key) {
+        setSectorCode(key);
+    }
+	
+	@Override
+	public void check() {
+	}
+	
+	@Override
+	public List<String> summaryValues() {
 		return new GenericOperations<Sector>(Sector.class).list()
 				.stream()
 				.map( sector -> sector.getKey())

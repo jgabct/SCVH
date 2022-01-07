@@ -17,7 +17,7 @@ import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.annotations.Blocked;
 import br.edu.ifs.academico.utils.annotations.ItIsABox;
 import br.edu.ifs.academico.utils.annotations.NameField;
-import br.edu.ifs.academico.utils.enums.EmployeeType;
+import br.edu.ifs.academico.utils.enums.Post;
 
 @Entity
 public class Employee implements IEntity {
@@ -44,16 +44,13 @@ public class Employee implements IEntity {
 	@NameField(value = "Cargo")
 	@Enumerated(EnumType.STRING)
 	@ItIsABox
-	private EmployeeType post;
+	private Post post;
 
 	@NameField(value = "Senha")
 	private String password;
 
 	@NameField(value = "CPF")
 	private String cpf;
-
-	@NameField(value = "Telefone")
-	private String phone;
 
 	/*
 	 * As anotações abaixo criam uma relação Muitos para um (N:1) Além de criar uma
@@ -68,11 +65,10 @@ public class Employee implements IEntity {
 
     public Employee() {/*Construtor vazio*/}
     
-    public Employee(String registration, String name, String cpf, String phone, String password, EmployeeType post, Sector sector) {
+    public Employee(String registration, String name, String cpf, String password, Post post, Sector sector) {
     	setRegistration(registration);
         setName(name);
         setCpf(cpf);
-        setPhone(phone);
         setPassword(password);
         setPost(post);
         setSector(sector);
@@ -95,12 +91,6 @@ public class Employee implements IEntity {
     public void setCpf(String cpf) {
         this.cpf = cpf;
     }
-
-    public String getPhone() { return this.phone; }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
     
     public String getPassword() { return this.password; }
 
@@ -108,9 +98,9 @@ public class Employee implements IEntity {
 		this.password = CryptoManager.encryptPswd(password);
 	}
 
-	public EmployeeType getPost() { return this.post; }
+	public Post getPost() { return this.post; }
 
-	public void setPost(EmployeeType enrollment) {
+	public void setPost(Post enrollment) {
 		this.post = enrollment;
 	}
 
@@ -142,18 +132,31 @@ public class Employee implements IEntity {
         return getRegistration();
     }
 	
-	public static List<String> summaryValues() {
+	@Override
+    public void setKey(String key) {
+        setRegistration(key);
+    }
+	
+	@Override
+	public void check() {
+		setPassword(this.password);
+	}
+	
+	@Override
+	public List<String> summaryValues() {
 		return new GenericOperations<Employee>(Employee.class).list()
 				.stream()
 				.map( employee -> employee.getKey())
 				.collect(Collectors.toList());
 	}
-    
+
 	@Override
 	public String toString() {
-		return "Employee [registration=" + registration + ", name=" + name + ", cpf=" + cpf + ", numberPhone="
-				+ phone + ", password=" + password + ", post=" + post + ", sector=" + sector + "]";
+		return "Employee [registration=" + registration + ", name=" + name + ", post=" + post + ", password=" + password
+				+ ", cpf=" + cpf + ", sector=" + sector + "]";
 	}
+    
+
 
 }
 

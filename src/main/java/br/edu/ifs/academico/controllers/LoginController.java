@@ -9,7 +9,7 @@ import br.edu.ifs.academico.model.entities.Employee;
 import br.edu.ifs.academico.model.services.CryptoManager;
 import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.LoadScene;
-import br.edu.ifs.academico.utils.enums.EmployeeType;
+import br.edu.ifs.academico.utils.enums.Post;
 import br.edu.ifs.academico.utils.enums.Frame;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -83,7 +83,7 @@ public class LoginController implements Initializable {
 		String employeePassword = employeePasswordTextField.getText();
 
 		if ("".equals(employeeEnrolment) || "".equals(employeePassword)) {
-			System.out.println(employeeEnrolment);
+			System.out.println("---> "+employeeEnrolment);
 			return;
 
 		} else {
@@ -94,33 +94,10 @@ public class LoginController implements Initializable {
 
 				Main.setEmployee(employee);
 
-				try {
-					switch (employee.getPost()) {
-					case RECEPTIONIST -> {
-						System.out.println(EmployeeType.RECEPTIONIST);
-						Main.getEmployee().setPost(EmployeeType.RECEPTIONIST);
-					}
-					case ADMINISTRATOR -> {
-						System.out.println(EmployeeType.ADMINISTRATOR);
-						Main.getEmployee().setPost(EmployeeType.ADMINISTRATOR);
-					}
-					case NURSE -> {
-						System.out.println(EmployeeType.NURSE);
-						Main.getEmployee().setPost(EmployeeType.NURSE);
-					}
-					default -> throw new IllegalArgumentException("Unexpected value: " + employeeEnrolment);
-					}
-
-					new DashboardController();
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
+				new DashboardController();
+				
 			} else {
-
 				return;
-
 			}
 
 		}

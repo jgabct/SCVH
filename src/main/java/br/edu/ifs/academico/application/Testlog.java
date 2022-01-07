@@ -1,44 +1,107 @@
 package br.edu.ifs.academico.application;
 
 import br.edu.ifs.academico.model.entities.Employee;
-import br.edu.ifs.academico.model.entities.Sector;
 import br.edu.ifs.academico.model.services.EMFactory;
 import br.edu.ifs.academico.model.services.GenericOperations;
-import br.edu.ifs.academico.utils.enums.EmployeeType;
+import br.edu.ifs.academico.utils.enums.Post;
 
 public class Testlog {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
-		//OBS: ESSA É UMA CLASSE FEITA SOMENTE PARA DEBUG
-		// NA COMPILAÇÃO FINAL ELA SERÁ DELETAD
-
+		
 		GenericOperations<Employee> go = new GenericOperations<>(Employee.class);
-		GenericOperations<Sector> go2 = new GenericOperations<>(Sector.class);
 
 		Employee emp = new Employee();
 		
 		emp.setRegistration("A500");
-		emp.setName("Paulo Andrade");
-		emp.setCpf("123.123.123-11");
+		emp.setName("MARCOS");
 		emp.setPassword("113355");
-		emp.setPost(EmployeeType.ADMINISTRATOR);
+		emp.setPost(Post.ADMINISTRATOR);
 		
-		Sector sec = new Sector();
-		sec.setSectorCode("123");
-		
-		emp.setSector(sec);
-
-		go2.register(sec);
 		go.register(emp);
-
 		
-		go2.endOperations();
 		go.endOperations();
 	
 		
 		EMFactory.closeEntityManagerFactory();	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+		//OBS: ESSA É UMA CLASSE FEITA SOMENTE PARA DEBUG
+		// NA COMPILAÇÃO FINAL ELA SERÁ DELETAD
+		
+//		Object obj = Employee.class.getConstructor().newInstance();
+//		
+//		((Employee)obj).setPost(EmployeeType.NURSE);
+//		
+//		for (Iterator<EmployeeType> itr = List.of(EmployeeType.values()).iterator(); itr.hasNext(); ){
+//			System.err.println(itr.next().toString());
+//		}
+//
+//		for(Field field : Employee.class.getDeclaredFields()) {
+//			
+//			if(field.isAnnotationPresent(ItIsABox.class)) {
+////				Class<?> clazz = Class.forName(field.getType().getName());
+////				clazz.getMethod("summaryValues").invoke(clazz.getConstructor().newInstance());
+//				
+//				if(field.getType().isEnum()) {
+//					
+//					field.setAccessible(true);
+//					
+////					Enum<?> oldValue = (Enum<?>) ;
+//					
+//					System.out.println("//////");
+//					for(Field interField : field.getType().getDeclaredFields()){
+////						if(interField.isEnumConstant()) {
+//							System.out.println(interField.getName());
+////						}
+//					}
+//					
+//					field.set(obj, EmployeeType.ADMINISTRATOR);
+//					
+//
+//					
+//				}
+//				                           
+//					
+//			}
+//
+//		}
+
+//		System.out.println(((Employee)obj).getPost());
 		
 	}
 

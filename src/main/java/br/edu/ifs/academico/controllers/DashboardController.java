@@ -12,7 +12,7 @@ import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.components.ComponentsAdministratorDashboard;
 import br.edu.ifs.academico.utils.components.ComponentsNurseDashboard;
 import br.edu.ifs.academico.utils.components.ComponentsReceptionistDashboard;
-import br.edu.ifs.academico.utils.enums.EmployeeType;
+import br.edu.ifs.academico.utils.enums.Post;
 import br.edu.ifs.academico.utils.enums.Frame;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -31,7 +31,7 @@ public class DashboardController implements Initializable {
     //Início das variáveis da Classe
 
     private Stage insideStage;
-    private EmployeeType employeeType;
+    private Post employeeType;
 
     //Término das variáveis da Classe
 
@@ -92,7 +92,7 @@ public class DashboardController implements Initializable {
     }
 
 
-    private List<Node> getListButtonsBasedTypeFunctionary2(EmployeeType type){
+    private List<Node> getListButtonsBasedTypeFunctionary2(Post type){
         switch (type) {
             case RECEPTIONIST -> {
                 return ((ComponentsReceptionistDashboard) new Factory(insideStage).getDashboard(type)).getListCompositionPaneButtons();

@@ -49,12 +49,11 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" />
                </BorderPane.margin>
                <children>
-                  <TableView fx:id="table" prefHeight="355.0" prefWidth="645.0">
+                  <TableView fx:id="table" prefHeight="355.0" prefWidth="535.0">
                     <columns>
                       <TableColumn fx:id="colRegistration" editable="false" prefWidth="95.0" resizable="false" text="Matrícula" />
                       <TableColumn fx:id="colName" editable="false" prefWidth="150.0" resizable="false" text="Nome" />
                         <TableColumn fx:id="colCpf" editable="false" prefWidth="110.0" resizable="false" text="CPF" />
-                        <TableColumn fx:id="colPhone" editable="false" prefWidth="110.0" resizable="false" text="Telefone" />
                         <TableColumn fx:id="colPost" editable="false" prefWidth="95.0" resizable="false" text="Cargo" />
                         <TableColumn fx:id="colSector" editable="false" prefWidth="85.0" resizable="false" text="Setor" />
                     </columns>

@@ -27,14 +27,13 @@ public class Room implements IEntity {
 	@NameField(value = "Código")
 	private String roomCode;
 
-	@NameField(value = "Regra")
+//	@NameField(value = "Regra")
 	@ManyToOne
 	@JoinColumn(name = "rule", referencedColumnName = "ruleCode")
 	@ItIsABox
 	private Rule rule;
 
-	@OneToMany
-	@JoinColumn(name = "room", referencedColumnName = "roomCode")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "belongingRoom" )
 	private Set<Bed> beds;
 
 	//OBS: O campo currentVisits não é armazenado no banco 
@@ -56,15 +55,6 @@ public class Room implements IEntity {
     public Room(String roomCode, Rule rule, Sector belongingSector) {
         this(roomCode, belongingSector);
         setRule(rule);
-    }
-    
-    public Room(String roomCode, Sector sectorCode, Set<Bed> listBeds) {
-    	this(roomCode, sectorCode);
-    	setBeds(listBeds);
-    }
-    public Room(String roomCode, Rule ruleCode, Sector sectorCode, Set<Bed> listBeds) {
-    	this(roomCode, ruleCode, sectorCode);
-    	setBeds(listBeds);
     }
 
     public String getRoomCode() {
@@ -95,10 +85,6 @@ public class Room implements IEntity {
 		return this.beds;
 	}
 
-	public void setBeds(Set<Bed> beds) {
-		this.beds = beds;
-	}
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(roomCode);
@@ -121,11 +107,21 @@ public class Room implements IEntity {
         return getRoomCode();
     }
 	
+	@Override
+    public void setKey(String key) {
+        setRoomCode(key);
+    }
+	
+	@Override
+	public void check() {
+	}
+	
 	public void addVisit(Visit visit) {
 		this.currentVisits.add(visit);
 	}
 	
-	public static List<String> summaryValues() {
+	@Override
+	public List<String> summaryValues() {
 		return new GenericOperations<Room>(Room.class).list()
 				.stream()
 				.map( room -> room.getKey())

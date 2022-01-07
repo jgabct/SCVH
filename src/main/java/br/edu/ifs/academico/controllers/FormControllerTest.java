@@ -3,28 +3,25 @@ package br.edu.ifs.academico.controllers;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 
-import javax.management.modelmbean.InvalidTargetObjectTypeException;
-
-import org.jboss.jandex.ClassExtendsTypeTarget;
+import javax.persistence.Id;
 
 import br.edu.ifs.academico.application.Main;
-import br.edu.ifs.academico.model.entities.Sector;
 import br.edu.ifs.academico.model.interfaces.IEntity;
 import br.edu.ifs.academico.model.services.GenericOperations;
+import br.edu.ifs.academico.utils.IdentityOfEnumerators;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.annotations.Blocked;
-import br.edu.ifs.academico.utils.annotations.FriendlyName;
 import br.edu.ifs.academico.utils.annotations.NameField;
 import br.edu.ifs.academico.utils.enums.Frame;
+import br.edu.ifs.academico.utils.enums.KeyField;
+import br.edu.ifs.academico.utils.enums.Post;
 import br.edu.ifs.academico.utils.enums.SystemObjects;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -153,7 +150,80 @@ public class FormControllerTest implements Initializable {
     		.stream()
     		.filter(trinket -> trinket.isAnnotationPresent(NameField.class))
     		.collect(LinkedList<InputLine>::new, 
-    				(list, trinket) -> list.add(new InputLine(trinket)), 
+    				(list, trinket) -> {
+    					InputLine input = new InputLine(trinket);
+    					if(trinket.getType().isEnum()) {
+ 
+    						System.out.println("passei");
+    						
+    						ComboBox<Object> box = new ComboBox<>();
+  
+//    						Method summaryValues = null;
+//							try {
+//								summaryValues = trinket.getType().getMethod("summaryValues");
+//								
+//							} catch (NoSuchMethodException | SecurityException e1) {
+//								// TODO Auto-generated catch block
+//								e1.printStackTrace();
+//							}
+//    						
+//    						List<?> mapper = null;
+//    						
+//							try {
+//								mapper = (List<?>) summaryValues.invoke(null);
+//
+//							} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+//								// TODO Auto-generated catch block
+//								e.printStackTrace();
+//							}
+//    						List<?> l = List.of(trinket.getType().getDeclaredFields())
+//    						.stream().filter( oty -> oty.isEnumConstant())
+//    						.map(it ->  it.toString())
+//    						.collect(Collectors.toList());
+    						
+//    						try {
+////								box.getItems().addAll(List.of(trinket.getType().getMethod("summaryValues").invoke(null)));
+//    							box.setItems( FXCollections.observableArrayList(List.of(trinket.getType().getMethod("summaryValues").invoke(null))));
+//							} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+//									| NoSuchMethodException | SecurityException e) {
+//								// TODO Auto-generated catch block
+//								e.printStackTrace();
+//							}
+    						
+    						box.setItems( FXCollections.observableArrayList(trinket.getType().getEnumConstants()));
+    							
+    						box.getSelectionModel().selectFirst();
+
+    						input.setComboBox(box);
+    						
+    						} else if (!trinket.getType().equals(String.class)) {
+    						
+    						
+//    						System.out.println("Tá diferente");
+//    						System.out.println(trinket.getType());
+    						ComboBox<Object> box = new ComboBox<>();
+    						
+    						try {
+    							Object obj = trinket.getType().getConstructor().newInstance();
+    							//.getMethod("summaryValues").invoke(null)
+								box.getItems().addAll(((IEntity) obj).summaryValues());
+							} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+									| NoSuchMethodException | SecurityException | InstantiationException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+    						
+    						box.getSelectionModel().selectFirst();
+
+    						input.setComboBox(box);  						
+    						
+    					} else {
+    						input.setField();
+    					}
+    					
+    					
+    					list.add(input);
+    				},
     				List::addAll);
     }
     
@@ -169,12 +239,44 @@ public class FormControllerTest implements Initializable {
 			
 			for(InputLine input : listInputText) {
 				
-				Field field = clazz.getDeclaredField(input.getField().getName());
+				Field field = clazz.getDeclaredField(input.getFieldKey().getName());
 				
 				field.setAccessible(true);
 				
-				field.set(obj, input.getInputLineText());	
-				
+				if(field.getType().isEnum()) {
+					
+					System.out.println("2");
+					if(field.getType() == Post.class) {
+						System.out.println("yes");
+						System.out.println(input.getValueInComboBox().getClass());
+						System.out.println(input.getValueInComboBox());
+						field.set(obj, Post.find(input.getValueInComboBox()));	
+						
+					}
+					
+				} else if (!field.getType().equals(String.class)) {
+
+					Object outher = field.getType().getConstructor(new Class[]{}).newInstance();
+					System.out.println("-> "+outher.getClass());
+					
+					((IEntity) outher).setKey(input.getValueInComboBox());
+					
+//					for(Field f : outher.getClass().getDeclaredFields()){
+//						
+//						if(f.isAnnotationPresent(KeyField.class)) {
+//							System.out.println("3");
+//							
+//							f.set(outher, input.getValueInComboBox());
+//						}
+//					}
+//					
+					field.set(obj, outher);
+					
+				} else {
+					System.out.println("1");
+					field.set(obj, input.getTextInField());	
+				}
+
 			}
 			
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
@@ -182,6 +284,8 @@ public class FormControllerTest implements Initializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		((IEntity) obj).check();
     	
 		gen.register(clazz.cast(obj));
 
@@ -243,21 +347,25 @@ public class FormControllerTest implements Initializable {
 //	}
     
      public static class InputLine extends HBox{
-    	 	private Field field;
+    	 	private Field fieldKey;
     	 	private TextField textField;
-    		private ComboBox<Object> fieldBox;
+    		private ComboBox<?> fieldBox;
     		
-    		public InputLine(Field field) {
+    		public InputLine(Field fieldKey) {
     			setPrefSize(600, 40);
     			setSpacing(10);
     			setAlignment(Pos.CENTER);
     			
-    			this.field = field;
+    			this.fieldKey = fieldKey;
     			
-    			setTitle(field.getAnnotation(NameField.class).value());
-    			setField();
+    			setTitle(fieldKey.getAnnotation(NameField.class).value());
     		}
+    		//Key
+			public Field getFieldKey() {
+				return fieldKey;
+			}
     		
+    		//Title
     		private void setTitle(String title) {
     			Label containerTitle = new Label(title);
     			containerTitle.setPrefSize(100, 40);
@@ -265,6 +373,7 @@ public class FormControllerTest implements Initializable {
     			getChildren().add(containerTitle);
     		}
     		
+    		//Field
     		private void setField() {
     			textField = new TextField();
     			textField.setPrefSize(220, 30);
@@ -272,42 +381,29 @@ public class FormControllerTest implements Initializable {
     			getChildren().add(textField);
     		}
     		
-    		private void setComboBox() {
-    			fieldBox = new ComboBox<Object>();
+    		public void setTextInField(String text){
+    			textField.setText(text);
+    			if(fieldKey.isAnnotationPresent(Blocked.class)) {
+    				textField.setEditable(false);
+    			}
+    		}
+    		
+    		public String getTextInField() {
+    			return textField.getText();
+    		}
+    		
+    		//Combobox
+    		private void setComboBox(ComboBox<?> box) {
+    			fieldBox = box;
     			fieldBox.setPrefSize(220, 30);
     			getChildren().add(fieldBox);
     			
     		}
     		
-    		public void setListComboBox(List<?> list) {
-    			fieldBox.getItems().addAll(list);
-    		}
-    		
-    		public void setTextInputLine(String text){
-    			textField.setText(text);
-    			if(field.isAnnotationPresent(Blocked.class)) {
-    				textField.setEditable(false);
-    			}
-    		}
-    		
-    		public String getInputLineText() {
-    			return textField.getText();
-    		}
-    		
-    		public String getInputLineTextComboBox (){
-    			String resp = fieldBox.getValue().toString(); 
-    			System.out.println("-> "+resp);
-    			return resp;
+    		public String getValueInComboBox (){
+    			return fieldBox.getSelectionModel().getSelectedItem().toString();
     		}
 
-			public Field getField() {
-				return field;
-			}
-
-			public void setField(Field field) {
-				this.field = field;
-			}
-    		
      }
     
 }

@@ -144,7 +144,17 @@ public class Patient implements IEntity {
         return getLinkCode();
     }
 	
-	public static List<String> summaryValues() {
+	@Override
+    public void setKey(String key) {
+        setLinkCode(key);
+    }
+	
+	@Override
+	public void check() {
+	}
+	
+	@Override
+	public List<String> summaryValues() {
 		return new GenericOperations<Patient>(Patient.class).list()
 				.stream()
 				.map( patient -> patient.getKey())

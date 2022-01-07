@@ -35,7 +35,7 @@ public class ComponentsNurseDashboard extends Component {
 			((CustomButton) btn).setPrefSize(getWidthButton(),getHeightButton());
 			BorderPane.setAlignment(btn, Pos.BOTTOM_CENTER);
 			pane.setBottom(btn);
-			pane.setStyle("-fx-background-color: rgba(251,199,90,0.5);");
+//			pane.setStyle("-fx-background-color: rgba(251,199,90,0.5);");
 			getPaneButtonsList().add(pane);
 		}
 	}

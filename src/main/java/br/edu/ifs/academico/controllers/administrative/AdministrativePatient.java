@@ -6,10 +6,12 @@ import java.util.ResourceBundle;
 
 import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.controllers.DashboardController;
+import br.edu.ifs.academico.controllers.FormControllerTest;
 import br.edu.ifs.academico.model.entities.Patient;
 import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.enums.Frame;
+import br.edu.ifs.academico.utils.enums.SystemObjects;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -89,6 +91,7 @@ public class AdministrativePatient implements Initializable{
 		
 		  addButton.setOnAction(event -> {
 	        	System.out.println("addButton diz: click");
+	        	new FormControllerTest(SystemObjects.PATIENT, go, this.getClass());
 	        });
 	        
 	        editButton.setOnAction(event -> {

@@ -26,7 +26,7 @@ public class ComponentsAdministratorDashboard extends Component {
 				}
 			);
 	
-	private final CustomButton bedButton = new CustomButton("Camas", "idBedButton",
+	private final CustomButton bedButton = new CustomButton("Leitos", "idBedButton",
 				event -> {
 					System.out.println("bedButton diz: click");
 					new AdministrativeBed();

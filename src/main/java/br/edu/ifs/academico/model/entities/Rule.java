@@ -95,8 +95,22 @@ public class Rule implements IEntity {
     }
 
 	@Override
+    public void setKey(String key) {
+    }
+	
+	@Override
+	public void check() {
+	}
+	
+	@Override
 	public String toString() {
 		return "Rule [ruleCode=" + ruleCode + ", turnArgs=" + turnArgs + ", capacityArgs=" + capacityArgs + "]";
+	}
+
+	@Override
+	public List<String> summaryValues() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

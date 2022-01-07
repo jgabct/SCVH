@@ -1,6 +1,7 @@
 package br.edu.ifs.academico.model.entities;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -131,6 +132,14 @@ public class Visit implements IEntity {
         return getVisitId();
     }
 	
+	@Override
+    public void setKey(String key) {
+    }
+	
+	@Override
+	public void check() {
+	}
+	
 //	public void markEntryDate() {
 //
 //	}
@@ -143,6 +152,12 @@ public class Visit implements IEntity {
 	public String toString() {
 		return "Visit [visitId=" + visitId + ", visitor=" + visitor + ", pacient=" + pacient + ", roomCode=" + roomCode
 				+ ", accompanying=" + accompanying + ", entryDate=" + entryDate + ", exitDate=" + exitDate + "]";
+	}
+
+	@Override
+	public List<String> summaryValues() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

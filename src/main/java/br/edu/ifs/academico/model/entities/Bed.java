@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import br.edu.ifs.academico.model.interfaces.IEntity;
@@ -29,6 +30,9 @@ public class Bed implements IEntity {
 	
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "occupiedBed")
 	private Patient occupyingPacient;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Room belongingRoom;
 
     public Bed() {/*Constructor vazio*/}
 
@@ -61,6 +65,12 @@ public class Bed implements IEntity {
 		return occupyingPacient;
 	}
 
+	public Room getBelongingRoom() { return this.belongingRoom; }
+
+	public void setBelongingRoom(Room belongingRoom) {
+		this.belongingRoom = belongingRoom;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(propertyNumber);
@@ -83,7 +93,17 @@ public class Bed implements IEntity {
         return getPropertyNumber();
     }
 	
-	public static List<String> summaryValues() {
+	@Override
+    public void setKey(String key) {
+        setPropertyNumber(key);
+    }
+	
+	@Override
+	public void check() {
+	}
+	
+	@Override
+	public List<String> summaryValues() {
 		return new GenericOperations<Bed>(Bed.class).list()
 				.stream()
 				.map( bed -> bed.getKey())
@@ -92,8 +112,11 @@ public class Bed implements IEntity {
 
 	@Override
 	public String toString() {
-		return "Bed [propertyNumber=" + propertyNumber + ", bedNumber=" + bedNumber + "]";
+		return "Bed [propertyNumber=" + propertyNumber + ", bedNumber=" + bedNumber + ", occupied=" + occupied
+				+ ", occupyingPacient=" + occupyingPacient + ", belongingRoom=" + belongingRoom + "]";
 	}
+
+
 
 
 	

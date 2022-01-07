@@ -114,7 +114,17 @@ public class Visitor implements IEntity {
         return getCpf();
     }
 	
-	public static List<String> summaryValues() {
+	@Override
+    public void setKey(String key) {
+        setCpf(key);
+    }
+	
+	@Override
+	public void check() {
+	}
+	
+	@Override
+	public List<String> summaryValues() {
 		return new GenericOperations<Visitor>(Visitor.class).list()
 				.stream()
 				.map( visitor -> visitor.getKey())
