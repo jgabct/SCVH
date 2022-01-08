@@ -7,8 +7,10 @@ import java.util.ResourceBundle;
 import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.controllers.DashboardController;
 import br.edu.ifs.academico.controllers.FormControllerTest;
+import br.edu.ifs.academico.model.entities.Room;
 import br.edu.ifs.academico.model.entities.Sector;
 import br.edu.ifs.academico.model.services.GenericOperations;
+import br.edu.ifs.academico.utils.AlertBox;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.enums.Frame;
 import br.edu.ifs.academico.utils.enums.SystemObjects;
@@ -19,6 +21,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -32,6 +35,9 @@ public class AdministrativeSector implements Initializable{
     private GenericOperations<Sector> go = new GenericOperations<>(Sector.class);
 
     private Stage insideStage;
+    
+    @FXML private Label title;
+    @FXML private Label employeeName;
 	
 	@FXML private TableView<Sector> table;
 	
@@ -53,6 +59,9 @@ public class AdministrativeSector implements Initializable{
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		
+		title.setText("Gerenciamento de Setores");
+		employeeName.setText(Main.getEmployee().getName());
 
 		colSectorCode.setCellValueFactory(cellData -> new SimpleStringProperty(((Sector) cellData.getValue()).getSectorCode()));
 		colAcronym.setCellValueFactory(cellData -> new SimpleStringProperty(((Sector) cellData.getValue()).getAcronym()));
@@ -96,7 +105,9 @@ public class AdministrativeSector implements Initializable{
 	        	System.out.println("editButton diz: click");
 	        	try {
 		        	if(!table.getSelectionModel().selectedItemProperty().get().equals(null)) {
-			        	System.out.println(table.getSelectionModel().selectedItemProperty().get().toString());
+			        	Sector sectorE = table.getSelectionModel().selectedItemProperty().get();
+			        	
+			        	new FormControllerTest(sectorE, SystemObjects.SECTOR, go, this.getClass());
 		        	}
 				} catch (Exception e) {
 					return;
@@ -105,6 +116,20 @@ public class AdministrativeSector implements Initializable{
 	        
 	        removeButton.setOnAction(event -> {
 	        	System.out.println("removeButton diz: click");
+	        	try {
+		        	if(!table.getSelectionModel().selectedItemProperty().get().equals(null)) {
+		        		Sector sectorR = table.getSelectionModel().selectedItemProperty().get();
+		        		
+		        		try {
+				        	go.delete(sectorR.getKey());
+				        	table.getItems().remove(sectorR);
+		        		}catch (Exception e) {
+							AlertBox.display("Aviso", "Não pode ser excuido por ainda ter vinculo com outra entidade");
+						}
+		        	}
+				} catch (Exception e) {
+					return;
+				}
 	        });
 	        
 	        exitButton.setOnAction(event -> {

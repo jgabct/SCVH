@@ -2,6 +2,7 @@ package br.edu.ifs.academico.utils.components;
 
 import java.util.List;
 
+import br.edu.ifs.academico.controllers.administrative.AdministrativePatient;
 import br.edu.ifs.academico.utils.CustomButton;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,8 +12,11 @@ import javafx.stage.Stage;
 
 public class ComponentsNurseDashboard extends Component {
 
-	private final CustomButton patientButton = new CustomButton("Paciente", "idPatientButton", 120, 40, 
-			event -> {}
+	private final CustomButton patientsButton = new CustomButton("Pacientes", "idPatientsButton",
+			event -> {
+				System.out.println("patientsButton diz: click");
+				new AdministrativePatient();
+			}
 		);
 
 	public ComponentsNurseDashboard(Stage outsideStage) {
@@ -23,7 +27,7 @@ public class ComponentsNurseDashboard extends Component {
 
 	@Override
 	protected void initializeComponents() {
-		getButtonsList().add(patientButton);
+		getButtonsList().add(patientsButton);
 	}
 
 	public void updateButtons(List<Node> btnList) {

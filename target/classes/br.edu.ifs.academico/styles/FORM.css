@@ -1,6 +1,8 @@
 .root {
 	-fx-background-image: url('../img/back.png');
 	-fx-background-size: cover;
+	-fx-text-fill: #05445E;
+	-fx-font-size: 10.5pt;
 }
 
 .flowPane {

@@ -112,7 +112,7 @@ public class Employee implements IEntity {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(cpf, registration);
+		return Objects.hash(registration);
 	}
 
 	@Override
@@ -124,7 +124,7 @@ public class Employee implements IEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		Employee other = (Employee) obj;
-		return Objects.equals(cpf, other.cpf) && Objects.equals(registration, other.registration);
+		return Objects.equals(registration, other.registration);
 	}
 
 	@Override
@@ -155,6 +155,8 @@ public class Employee implements IEntity {
 		return "Employee [registration=" + registration + ", name=" + name + ", post=" + post + ", password=" + password
 				+ ", cpf=" + cpf + ", sector=" + sector + "]";
 	}
+
+
     
 
 

@@ -12,7 +12,6 @@ import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.enums.Frame;
 import br.edu.ifs.academico.utils.enums.SystemObjects;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -100,6 +99,13 @@ public class AdministrativeRule implements Initializable{
 	        
 	        removeButton.setOnAction(event -> {
 	        	System.out.println("removeButton diz: click");
+	        	try {
+		        	if(!table.getSelectionModel().selectedItemProperty().get().equals(null)) {
+			        	go.delete(table.getSelectionModel().selectedItemProperty().get().getKey());
+		        	}
+				} catch (Exception e) {
+					return;
+				}
 	        });
 	        
 	        exitButton.setOnAction(event -> {

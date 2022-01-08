@@ -32,7 +32,7 @@ public class Patient implements IEntity {
 	
 	private String employeeRegistry;
 
-	@NameField(value = "Data de Nascimento")
+//	@NameField(value = "Data de Nascimento")
 	private LocalDate birthDate;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pacient")
@@ -146,11 +146,11 @@ public class Patient implements IEntity {
 	
 	@Override
     public void setKey(String key) {
-        setLinkCode(key);
     }
 	
 	@Override
 	public void check() {
+		getOccupiedBed().check();
 	}
 	
 	@Override

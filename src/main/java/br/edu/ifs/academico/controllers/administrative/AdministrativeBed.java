@@ -8,7 +8,9 @@ import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.controllers.DashboardController;
 import br.edu.ifs.academico.controllers.FormControllerTest;
 import br.edu.ifs.academico.model.entities.Bed;
+import br.edu.ifs.academico.model.entities.Room;
 import br.edu.ifs.academico.model.services.GenericOperations;
+import br.edu.ifs.academico.utils.AlertBox;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.enums.Frame;
 import br.edu.ifs.academico.utils.enums.SystemObjects;
@@ -19,6 +21,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -32,13 +35,16 @@ public class AdministrativeBed implements Initializable{
 	private GenericOperations<Bed> go = new GenericOperations<>(Bed.class);
 
     private Stage insideStage;
+    
+    @FXML private Label title;
+    @FXML private Label employeeName;
 	
 	@FXML private TableView<Bed> table;
 	
 	@FXML private TableColumn<Bed, String> colPropertyNumber;
 	@FXML private TableColumn<Bed, String> colBedNumber;
 	@FXML private TableColumn<Bed, String> colOccupied;
-	@FXML private TableColumn<Bed, String> colOccupyingPacient;
+	@FXML private TableColumn<Bed, String> colBelongingRoom;
 
     @FXML private VBox centerPanel;
     
@@ -54,6 +60,9 @@ public class AdministrativeBed implements Initializable{
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		
+		title.setText("Gerenciamento de Leitos");
+		employeeName.setText(Main.getEmployee().getName());
+		
 		table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
 		colPropertyNumber.setCellValueFactory(
@@ -63,13 +72,27 @@ public class AdministrativeBed implements Initializable{
 				cellData -> new SimpleStringProperty(((Bed) cellData.getValue()).getBedNumber())
 			);
 		colOccupied.setCellValueFactory(
-				cellData -> new SimpleStringProperty(((Bed) cellData.getValue()).isOccupied()?"Ocupado":"Livre")
+				cellData -> {
+					try {
+						if(!((Bed) cellData.getValue()).getOccupyingPacient().equals(null)){
+							return new SimpleStringProperty("Ocupado");
+						}
+						return null;
+					} catch (Exception e) {
+						return new SimpleStringProperty("Livre");
+					}
+				}
 			);
-		colOccupyingPacient.setCellValueFactory(
-				cellData -> new SimpleStringProperty("Não tem")
-			);
-		
-		//((Bed) cellData.getValue()).getOccupyingPacient().getKey()
+		colBelongingRoom.setCellValueFactory(
+				cellData -> {
+					try {
+						Room belongingRoom = ((Bed) cellData.getValue()).getBelongingRoom();
+						return new SimpleStringProperty(belongingRoom.getKey());
+					} catch (Exception e) {
+						return new SimpleStringProperty("Sem Quarto");
+					}
+				}
+		);
 		
 		ObservableList<Bed> teamMembers = FXCollections.observableArrayList(go.list());
 		
@@ -93,8 +116,21 @@ public class AdministrativeBed implements Initializable{
 	        }  
 	    }); 
 		
+		table.getSelectionModel().selectedItemProperty().addListener(
+				(observable, oldValue, newValuew) -> {
+
+				}
+			);
+		
 		  addButton.setOnAction(event -> {
 	        	System.out.println("addButton diz: click");
+	        	
+	        	GenericOperations<?> temp = new GenericOperations<Room>(Room.class);
+	        	if(temp.list().isEmpty()) {
+	        		AlertBox.display("Aviso", "Cadastre um Quarto antes de proceguir com a operação");
+	        		return;
+	        	}
+	        	
 	        	new FormControllerTest(SystemObjects.BED, go, this.getClass());
 	        });
 	        
@@ -102,7 +138,9 @@ public class AdministrativeBed implements Initializable{
 	        	System.out.println("editButton diz: click");
 	        	try {
 		        	if(!table.getSelectionModel().selectedItemProperty().get().equals(null)) {
-			        	System.out.println(table.getSelectionModel().selectedItemProperty().get().toString());
+			        	Bed bedE = table.getSelectionModel().selectedItemProperty().get();
+			        	
+			        	new FormControllerTest(bedE, SystemObjects.BED, go, this.getClass());
 		        	}
 				} catch (Exception e) {
 					return;
@@ -113,12 +151,20 @@ public class AdministrativeBed implements Initializable{
 	        	System.out.println("removeButton diz: click");
 	        	try {
 		        	if(!table.getSelectionModel().selectedItemProperty().get().equals(null)) {
-			        	go.delete(table.getSelectionModel().selectedItemProperty().get().getKey());
+		        		Bed bedR = table.getSelectionModel().selectedItemProperty().get();
+		        		
+		        		try {
+		        			go.delete(bedR.getKey());
+				        	table.getItems().remove(bedR);
+				        	
+		        		}catch (Exception e) {
+							AlertBox.display("Aviso", "Não pode ser excuido por ainda ter vinculo com outra entidade");
+						}
+
 		        	}
 				} catch (Exception e) {
 					return;
 				}
-	        	
 	        });
 	        
 	        exitButton.setOnAction(event -> {
@@ -133,9 +179,12 @@ public class AdministrativeBed implements Initializable{
         	System.out.println("Init Constructor Adm");
         	insideStage = Main.getGlobalStage();
         	
-        	insideStage.setTitle("SCVH - Painel Administrativo - Leito");    	
+        	insideStage.setResizable(false);
+        	   	
         	LoadScene<AdministrativeBed> lScene = new LoadScene<>(this);
             insideStage.setScene(lScene.toCharge(Frame.ADMBED));
+            
+        	insideStage.setTitle("SCVH - Painel Administrativo - Leito"); 
             
             insideStage.show();
         } catch (IOException e) {

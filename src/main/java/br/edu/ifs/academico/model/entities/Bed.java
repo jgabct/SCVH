@@ -31,6 +31,7 @@ public class Bed implements IEntity {
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "occupiedBed")
 	private Patient occupyingPacient;
 	
+	@NameField(value="Quarto") 
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Room belongingRoom;
 

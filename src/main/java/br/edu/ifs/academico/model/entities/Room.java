@@ -40,6 +40,7 @@ public class Room implements IEntity {
 	@Transient
 	private Set<Visit> currentVisits;
 
+	@NameField(value = "Setor")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@ItIsABox
 	private Sector belongingSector;

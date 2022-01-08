@@ -9,16 +9,26 @@
 
 #idMenuBar{
      /*-fx-background-color: #99d1d1; */
-    -fx-background-color: rgba(153,209,209,0.7);  
+    -fx-background-color: rgba(242, 253, 254, 0.6);
 }
 
 .button {
 	-fx-font-size: 12pt;
 	-fx-text-fill: #FFFFFF;
-	-fx-background-color: rgba(77,135,180,0.8);
+	-fx-background-color: rgba(77,135,180,0.9);
 }
 
 .button:hover { 
 	-fx-font-size: 12pt;
-	-fx-background-color: rgba(14,50,90,0.8);
+	-fx-background-color: rgba(14,50,90,0.9);
+}
+
+#employeeName {
+	-fx-font-size: 14pt;
+	-fx-text-fill: #05445E;
+}
+
+#title {
+	-fx-font-size: 16pt;
+	-fx-text-fill: #05445E;
 }

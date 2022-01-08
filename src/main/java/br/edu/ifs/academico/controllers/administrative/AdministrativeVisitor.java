@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.controllers.DashboardController;
 import br.edu.ifs.academico.controllers.FormControllerTest;
+import br.edu.ifs.academico.model.entities.Sector;
 import br.edu.ifs.academico.model.entities.Visitor;
 import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.LoadScene;
@@ -19,6 +20,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -32,6 +34,9 @@ public class AdministrativeVisitor implements Initializable{
     private GenericOperations<Visitor> go = new GenericOperations<>(Visitor.class);
 
     private Stage insideStage;
+    
+    @FXML private Label title;
+    @FXML private Label employeeName;
 	
 	@FXML private TableView<Visitor> table;
 	
@@ -53,6 +58,9 @@ public class AdministrativeVisitor implements Initializable{
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		
+		title.setText("Gerenciamento de Visitantes");
+		employeeName.setText(Main.getEmployee().getName());
 
 		colCpf.setCellValueFactory(cellData -> new SimpleStringProperty(((Visitor) cellData.getValue()).getCpf()));
 		colName.setCellValueFactory(cellData -> new SimpleStringProperty(((Visitor) cellData.getValue()).getName()));
@@ -90,7 +98,9 @@ public class AdministrativeVisitor implements Initializable{
 	        	System.out.println("editButton diz: click");
 	        	try {
 		        	if(!table.getSelectionModel().selectedItemProperty().get().equals(null)) {
-			        	System.out.println(table.getSelectionModel().selectedItemProperty().get().toString());
+			        	Visitor visitorE = table.getSelectionModel().selectedItemProperty().get();
+			        	
+			        	new FormControllerTest(visitorE, SystemObjects.VISITOR, go, this.getClass());
 		        	}
 				} catch (Exception e) {
 					return;
@@ -99,6 +109,16 @@ public class AdministrativeVisitor implements Initializable{
 	        
 	        removeButton.setOnAction(event -> {
 	        	System.out.println("removeButton diz: click");
+	        	try {
+		        	if(!table.getSelectionModel().selectedItemProperty().get().equals(null)) {
+		        		Visitor visitorR = table.getSelectionModel().selectedItemProperty().get();
+		        		
+			        	go.delete(visitorR.getKey());
+			        	table.getItems().remove(visitorR);
+		        	}
+				} catch (Exception e) {
+					return;
+				}
 	        });
 	        
 	        exitButton.setOnAction(event -> {

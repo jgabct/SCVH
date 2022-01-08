@@ -7,8 +7,11 @@ import java.util.ResourceBundle;
 import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.controllers.DashboardController;
 import br.edu.ifs.academico.controllers.FormControllerTest;
+import br.edu.ifs.academico.model.entities.Bed;
 import br.edu.ifs.academico.model.entities.Employee;
+import br.edu.ifs.academico.model.entities.Sector;
 import br.edu.ifs.academico.model.services.GenericOperations;
+import br.edu.ifs.academico.utils.AlertBox;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.enums.Frame;
 import br.edu.ifs.academico.utils.enums.SystemObjects;
@@ -19,6 +22,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -32,6 +36,9 @@ public class AdministrativeEmployee implements Initializable{
     private GenericOperations<Employee> go = new GenericOperations<>(Employee.class);
 
     private Stage insideStage;
+    
+    @FXML private Label title;
+    @FXML private Label employeeName;
 	
 	@FXML private TableView<Employee> table;
 	
@@ -54,6 +61,9 @@ public class AdministrativeEmployee implements Initializable{
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		
+		title.setText("Gerenciamento de Funcionários");
+		employeeName.setText(Main.getEmployee().getName());
 
 	    colRegistration.setCellValueFactory(
 	    		cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getRegistration())
@@ -68,7 +78,7 @@ public class AdministrativeEmployee implements Initializable{
 				cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getPost().get())
 			);
 		colSector.setCellValueFactory(
-				cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getSector().getKey())
+				cellData -> new SimpleStringProperty(((Employee) cellData.getValue()).getSector().getAcronym())
 			);
 		
 		//
@@ -97,6 +107,13 @@ public class AdministrativeEmployee implements Initializable{
 		
 		  addButton.setOnAction(event -> {
 	        	System.out.println("addButton diz: click");
+	        	
+	        	GenericOperations<Sector> temp = new GenericOperations<>(Sector.class);
+	        	if(temp.list().isEmpty()) {
+	        		AlertBox.display("Aviso", "Cadastre um Setor antes de proceguir com a operação");
+	        		return;
+	        	}
+	        	
 	        	new FormControllerTest(SystemObjects.EMPLOYEE, go, this.getClass());
 	        });
 	        
@@ -104,7 +121,9 @@ public class AdministrativeEmployee implements Initializable{
 	        	System.out.println("editButton diz: click");
 	        	try {
 		        	if(!table.getSelectionModel().selectedItemProperty().get().equals(null)) {
-			        	System.out.println(table.getSelectionModel().selectedItemProperty().get().toString());
+			        	Employee employeeE = table.getSelectionModel().selectedItemProperty().get();
+			        	
+			        	new FormControllerTest(employeeE, SystemObjects.EMPLOYEE, go, this.getClass());
 		        	}
 				} catch (Exception e) {
 					return;
@@ -113,6 +132,22 @@ public class AdministrativeEmployee implements Initializable{
 	        
 	        removeButton.setOnAction(event -> {
 	        	System.out.println("removeButton diz: click");
+	        	try {
+		        	if(!table.getSelectionModel().selectedItemProperty().get().equals(null)) {
+		        		Employee employeeR = table.getSelectionModel().selectedItemProperty().get();
+
+		        		if(Main.getEmployee().equals(employeeR)) {
+		        			AlertBox.display("Aviso", "Não é possivel remover");
+			        		return;
+		        		}else {
+		        			go.delete(employeeR.getKey());
+				        	table.getItems().remove(employeeR);
+		        			return;
+		        		}
+		        	}
+				} catch (Exception e) {
+					return;
+				}
 	        });
 	        
 	        exitButton.setOnAction(event -> {

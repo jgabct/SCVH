@@ -7,8 +7,13 @@ import java.util.ResourceBundle;
 import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.controllers.DashboardController;
 import br.edu.ifs.academico.controllers.FormControllerTest;
+import br.edu.ifs.academico.model.entities.Bed;
+import br.edu.ifs.academico.model.entities.Employee;
 import br.edu.ifs.academico.model.entities.Patient;
+import br.edu.ifs.academico.model.entities.Room;
+import br.edu.ifs.academico.model.entities.Sector;
 import br.edu.ifs.academico.model.services.GenericOperations;
+import br.edu.ifs.academico.utils.AlertBox;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.enums.Frame;
 import br.edu.ifs.academico.utils.enums.SystemObjects;
@@ -19,6 +24,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -32,6 +38,9 @@ public class AdministrativePatient implements Initializable{
     private GenericOperations<Patient> go = new GenericOperations<>(Patient.class);
 
     private Stage insideStage;
+    
+    @FXML private Label title;
+    @FXML private Label employeeName;
 	
 	@FXML private TableView<Patient> table;
 	
@@ -39,6 +48,7 @@ public class AdministrativePatient implements Initializable{
 	@FXML private TableColumn<Patient, String> colName;
 	@FXML private TableColumn<Patient, String> colBirthDate;
 	@FXML private TableColumn<Patient, String> colPropertyNumber;
+	@FXML private TableColumn<Patient, String> colOccupiedRoom;
 
     @FXML private VBox centerPanel;
     
@@ -53,6 +63,9 @@ public class AdministrativePatient implements Initializable{
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		
+		title.setText("Gerenciamento de Pacientes");
+		employeeName.setText(Main.getEmployee().getName());
 
 		colLinkCode.setCellValueFactory(
 				cellData -> new SimpleStringProperty(((Patient) cellData.getValue()).getLinkCode())
@@ -61,10 +74,20 @@ public class AdministrativePatient implements Initializable{
 				cellData -> new SimpleStringProperty(((Patient) cellData.getValue()).getName())
 			);
 		colBirthDate.setCellValueFactory(
-				cellData -> new SimpleStringProperty(((Patient) cellData.getValue()).getBirthDate().toString())
+				cellData -> {
+					try {
+						return new SimpleStringProperty(((Patient) cellData.getValue()).getBirthDate().toString());
+					} catch (Exception e) {
+						return new SimpleStringProperty("Sem Data");
+					}
+				}
 			);
 		colPropertyNumber.setCellValueFactory(
 				cellData -> new SimpleStringProperty(((Patient) cellData.getValue()).getOccupiedBed().getKey())
+			);
+		
+		colOccupiedRoom.setCellValueFactory(
+				cellData -> new SimpleStringProperty(((Patient) cellData.getValue()).getOccupiedBed().getBelongingRoom().getKey())
 			);
 		
 		ObservableList<Patient> teamMembers = FXCollections.observableArrayList(go.list());
@@ -91,6 +114,19 @@ public class AdministrativePatient implements Initializable{
 		
 		  addButton.setOnAction(event -> {
 	        	System.out.println("addButton diz: click");
+	        	
+	        	GenericOperations<?> temp = new GenericOperations<Room>(Room.class);
+	        	if(temp.list().isEmpty()) {
+	        		AlertBox.display("Aviso", "Cadastre um Quarto antes de proceguir com a operação");
+	        		return;
+	        	}
+	        	
+	        	temp = new GenericOperations<Bed>(Bed.class);
+	        	if(temp.list().isEmpty()) {
+	        		AlertBox.display("Aviso", "Cadastre um Leito antes de proceguir com a operação");
+	        		return;
+	        	}
+	        	
 	        	new FormControllerTest(SystemObjects.PATIENT, go, this.getClass());
 	        });
 	        
@@ -98,7 +134,9 @@ public class AdministrativePatient implements Initializable{
 	        	System.out.println("editButton diz: click");
 	        	try {
 		        	if(!table.getSelectionModel().selectedItemProperty().get().equals(null)) {
-			        	System.out.println(table.getSelectionModel().selectedItemProperty().get().toString());
+			        	Patient patientE = table.getSelectionModel().selectedItemProperty().get();
+			        	
+			        	new FormControllerTest(patientE, SystemObjects.PATIENT, go, this.getClass());
 		        	}
 				} catch (Exception e) {
 					return;
@@ -107,6 +145,16 @@ public class AdministrativePatient implements Initializable{
 	        
 	        removeButton.setOnAction(event -> {
 	        	System.out.println("removeButton diz: click");
+	        	try {
+		        	if(!table.getSelectionModel().selectedItemProperty().get().equals(null)) {
+		        		Patient patientR = table.getSelectionModel().selectedItemProperty().get();
+		        		
+			        	go.delete(patientR.getKey());
+			        	table.getItems().remove(patientR);
+		        	}
+				} catch (Exception e) {
+					return;
+				}
 	        });
 	        
 	        exitButton.setOnAction(event -> {

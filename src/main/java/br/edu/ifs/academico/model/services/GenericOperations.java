@@ -2,7 +2,9 @@ package br.edu.ifs.academico.model.services;
 
 import java.util.List;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.RollbackException;
 
 import br.edu.ifs.academico.model.interfaces.IEntity;
 
@@ -29,25 +31,25 @@ public class GenericOperations<E extends IEntity> {
 		
 	}
 
-	public void register(E entity) {
+	public void register(E entity) throws EntityExistsException, RollbackException {
 
-		em.getTransaction().begin();
+	      em.getTransaction().begin();
 
-		em.persist(entity);
+	      em.persist(entity);
 
-		em.getTransaction().commit();
+	      em.getTransaction().commit();
 
-	}
+	  }
 	
-	public void register(Object entity) {
+	public void register(Object entity) throws EntityExistsException, RollbackException {
 
-		em.getTransaction().begin();
+	      em.getTransaction().begin();
 
-		em.persist(entity);
+	      em.persist(entity);
 
-		em.getTransaction().commit();
+	      em.getTransaction().commit();
 
-	}
+	  }
 
 	// OBS: O metodo retorna "E" que por natureza � o mesmo tipo do "E" da instancia
 	// da classe
@@ -62,37 +64,57 @@ public class GenericOperations<E extends IEntity> {
 
 	}
 
-	public void delete(Object pk) {
+	public void delete(Object pk) throws RollbackException {
 
-		em.getTransaction().begin();
+	    em.getTransaction().begin();
 
-		em.remove(select(pk));
+	    em.remove(select(pk));
 
-		em.getTransaction().commit();
+	    em.getTransaction().commit();
 
-	}
+	  }
 
 	// OBS: O metodo update verifica se a Primary Key foi alterada, caso ela foi
 	// alterada ele cria uma nova entidade e deleta a antiga
-	public void update(E alteredEntity, E args) {
+	public void update(E alteredEntity, E args) throws RollbackException {
 
-		if (alteredEntity.getKey().equals(args.getKey())) {
+	    if (alteredEntity.getKey().equals(args.getKey())) {
 
-			em.getTransaction().begin();
+	      em.getTransaction().begin();
 
-			em.merge(args);
+	      em.merge(args);
 
-			em.getTransaction().commit();
+	      em.getTransaction().commit();
 
-		} else {
+	    } else {
 
-			register(args);
+	      register(args);
 
-			delete(alteredEntity.getKey());
+	      delete(alteredEntity.getKey());
 
-		}
+	    }
 
-	}
+	  }
+	
+	public void update(Object alteredEntity, Object args) throws RollbackException {
+
+	    if (((IEntity) alteredEntity).getKey().equals(((IEntity)args).getKey())) {
+
+	      em.getTransaction().begin();
+
+	      em.merge(args);
+
+	      em.getTransaction().commit();
+
+	    } else {
+
+	      register(args);
+
+	      delete(((IEntity) alteredEntity).getKey());
+
+	    }
+
+	  }
 
 	public boolean exists(Object pk) {
 

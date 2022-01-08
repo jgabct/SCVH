@@ -7,8 +7,11 @@ import java.util.ResourceBundle;
 import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.controllers.DashboardController;
 import br.edu.ifs.academico.controllers.FormControllerTest;
+import br.edu.ifs.academico.model.entities.Patient;
 import br.edu.ifs.academico.model.entities.Room;
+import br.edu.ifs.academico.model.entities.Sector;
 import br.edu.ifs.academico.model.services.GenericOperations;
+import br.edu.ifs.academico.utils.AlertBox;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.enums.Frame;
 import br.edu.ifs.academico.utils.enums.SystemObjects;
@@ -19,6 +22,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -32,6 +36,9 @@ public class AdministrativeRoom implements Initializable{
     private GenericOperations<Room> go = new GenericOperations<>(Room.class);
 
     private Stage insideStage;
+    
+    @FXML private Label title;
+    @FXML private Label employeeName;
 	
 	@FXML private TableView<Room> table;
 	
@@ -52,7 +59,9 @@ public class AdministrativeRoom implements Initializable{
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-
+		
+		title.setText("Gerenciamento de Quartos");
+		employeeName.setText(Main.getEmployee().getName());
 
 		colRoomCode.setCellValueFactory(
 				cellData -> new SimpleStringProperty(((Room) cellData.getValue()).getRoomCode())
@@ -67,7 +76,7 @@ public class AdministrativeRoom implements Initializable{
 				}
 			);
 		colSector.setCellValueFactory(
-				cellData -> new SimpleStringProperty(((Room) cellData.getValue()).getBelongingSector().getKey())
+				cellData -> new SimpleStringProperty(((Room) cellData.getValue()).getBelongingSector().getAcronym())
 			);
 		
 		ObservableList<Room> teamMembers = FXCollections.observableArrayList(go.list());
@@ -92,8 +101,17 @@ public class AdministrativeRoom implements Initializable{
 	        }  
 	    }); 
 		
+		
+		
 		  addButton.setOnAction(event -> {
 	        	System.out.println("addButton diz: click");
+	        	
+	        	GenericOperations<Sector> temp = new GenericOperations<>(Sector.class);
+	        	if(temp.list().isEmpty()) {
+	        		AlertBox.display("Aviso", "Cadastre um Setor antes de proceguir com a operação");
+	        		return;
+	        	}
+	        	
 	        	new FormControllerTest(SystemObjects.ROOM, go, this.getClass());
 	        });
 	        
@@ -101,7 +119,9 @@ public class AdministrativeRoom implements Initializable{
 	        	System.out.println("editButton diz: click");
 	        	try {
 		        	if(!table.getSelectionModel().selectedItemProperty().get().equals(null)) {
-			        	System.out.println(table.getSelectionModel().selectedItemProperty().get().toString());
+			        	Room roomE = table.getSelectionModel().selectedItemProperty().get();
+			        	
+			        	new FormControllerTest(roomE, SystemObjects.ROOM, go, this.getClass());
 		        	}
 				} catch (Exception e) {
 					return;
@@ -110,6 +130,20 @@ public class AdministrativeRoom implements Initializable{
 	        
 	        removeButton.setOnAction(event -> {
 	        	System.out.println("removeButton diz: click");
+	        	try {
+		        	if(!table.getSelectionModel().selectedItemProperty().get().equals(null)) {
+		        		Room roomR = table.getSelectionModel().selectedItemProperty().get();
+		        		
+		        		try {
+				        	go.delete(roomR.getKey());
+				        	table.getItems().remove(roomR);
+		        		} catch (Exception e) {
+							AlertBox.display("Aviso", "Não pode ser excuido por ainda ter vinculo com outra entidade");
+						}
+		        	}
+				} catch (Exception e) {
+					return;
+				}
 	        });
 	        
 	        exitButton.setOnAction(event -> {

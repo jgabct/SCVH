@@ -33,12 +33,12 @@ public class ComponentsAdministratorDashboard extends Component {
 				}
 			);
 	
-	private final CustomButton ruleButton = new CustomButton("Regras", "idRuleButton",
-				event -> {
-					System.out.println("ruleButton diz: click");
-					new AdministrativeRule();
-				}
-			);
+//	private final CustomButton ruleButton = new CustomButton("Regras", "idRuleButton",
+//				event -> {
+//					System.out.println("ruleButton diz: click");
+//					new AdministrativeRule();
+//				}
+//			);
 
 	private final CustomButton employeeButton = new CustomButton("Funcionários", "idEmployeeButton",
 				event -> {
@@ -83,7 +83,7 @@ public class ComponentsAdministratorDashboard extends Component {
 		getButtonsList().add(employeeButton);
 		getButtonsList().add(patientsButton);
 		getButtonsList().add(visitorsButton);
-		getButtonsList().add(ruleButton);
+//		getButtonsList().add(ruleButton);
 		getButtonsList().add(sectorButton);
 		getButtonsList().add(roomButton);
 		getButtonsList().add(bedButton);

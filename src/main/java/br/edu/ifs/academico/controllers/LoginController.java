@@ -8,6 +8,7 @@ import br.edu.ifs.academico.application.Main;
 import br.edu.ifs.academico.model.entities.Employee;
 import br.edu.ifs.academico.model.services.CryptoManager;
 import br.edu.ifs.academico.model.services.GenericOperations;
+import br.edu.ifs.academico.utils.AlertBox;
 import br.edu.ifs.academico.utils.LoadScene;
 import br.edu.ifs.academico.utils.enums.Post;
 import br.edu.ifs.academico.utils.enums.Frame;
@@ -58,7 +59,7 @@ public class LoginController implements Initializable {
         	insideStage = Main.getGlobalStage(); 
         	
         	//Coloca um nome para o palco
-        	insideStage.setTitle("SCVH - Login"); 
+
         	
         	/* Respons·vel por carregar o FXML e o CSS, assim criando a cena para o palco, 
         	 * o parametro serve para mostrar qual È o controller respons·vel pela cena */        	
@@ -66,6 +67,8 @@ public class LoginController implements Initializable {
             
         	// Colocar a cena do palco
             insideStage.setScene(lScene.toCharge(Frame.LOGIN));
+            
+        	insideStage.setTitle("SCVH - Login"); 
             
             // Mostra o palco com sua cena atual
             insideStage.show();
@@ -84,24 +87,34 @@ public class LoginController implements Initializable {
 
 		if ("".equals(employeeEnrolment) || "".equals(employeePassword)) {
 			System.out.println("---> "+employeeEnrolment);
+			AlertBox.display("Aviso", "Campo n„o preenchido");
 			return;
 
 		} else {
+			try {
+				Employee employee = go.select(employeeEnrolment);
 
-			Employee employee = go.select(employeeEnrolment);
+				if(!employee.equals(null)) {
+					if (CryptoManager.descryptPswd(employeePassword, employee.getPassword())) {
 
-			if (CryptoManager.descryptPswd(employeePassword, employee.getPassword())) {
+						Main.setEmployee(employee);
 
-				Main.setEmployee(employee);
+						new DashboardController();
+						
+					} else {
+						
+						AlertBox.display("Aviso", "Matricula e/ou senha invalidos");
+						
+						return;
+					}
+				}else {
+					throw new NullPointerException();
+				}
 
-				new DashboardController();
-				
-			} else {
-				return;
+			} catch (Exception e) {
+				AlertBox.display("Aviso", "Nenhum funcion·rio foi encontrado ");
 			}
-
 		}
-
 	}
 
     //T√©rmino dos eventos dos bot√µes

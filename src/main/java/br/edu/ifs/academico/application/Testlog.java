@@ -1,6 +1,7 @@
 package br.edu.ifs.academico.application;
 
 import br.edu.ifs.academico.model.entities.Employee;
+import br.edu.ifs.academico.model.entities.Sector;
 import br.edu.ifs.academico.model.services.EMFactory;
 import br.edu.ifs.academico.model.services.GenericOperations;
 import br.edu.ifs.academico.utils.enums.Post;
@@ -19,6 +20,11 @@ public class Testlog {
 		emp.setPassword("113355");
 		emp.setPost(Post.ADMINISTRATOR);
 		
+		Sector sec = new Sector();
+		sec.setKey("124");
+		
+		
+		emp.setSector(sec );
 		go.register(emp);
 		
 		go.endOperations();
